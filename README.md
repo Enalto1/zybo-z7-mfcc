@@ -6,7 +6,7 @@ ZYBO Z7-20에서 MFCC 음성 특징 추출기를 구현하고 Python·ARM C·FPG
 
 ## 시작하기
 
-1. [개발 인수인계](docs/DEVELOPMENT_HANDOFF.md)를 읽습니다.
+1. [개발 인수인계](docs/DEVELOPMENT_HANDOFF.md)와 [참고 소스 현황](docs/REFERENCE_SOURCES.md)을 읽습니다.
 2. [첫 개발 작업](docs/FIRST_TASK.md)에 따라 참고 MFCC와 기존 FFT를 점검합니다.
 3. 공통 MFCC 규격을 확정하고 동일 입력으로 각 구현을 검증합니다.
 
