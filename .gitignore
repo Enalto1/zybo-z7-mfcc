@@ -1,0 +1,31 @@
+# Local Python environments and caches
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Generated outputs if a tool writes inside this repository
+/build/
+.Xil/
+*.cache/
+*.runs/
+*.sim/
+*.gen/
+
+# These materials belong outside the development repository
+/thesis/
+/presentation/
+/submission/
+/references/
+/reference_code/
+
+# Local credentials and temporary files
+.env
+.env.*
+!.env.example
+~$*
+Thumbs.db
+.DS_Store
