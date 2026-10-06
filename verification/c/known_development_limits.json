@@ -1,0 +1,12 @@
+{
+  "schema_version": 1,
+  "purpose": "Permit a frozen evaluation study after explicitly diagnosed development numerical failures, without declaring these failures passed or relaxing acceptance tolerances.",
+  "observed_in": "D:/2610_MFCC/build/c_reference/dev_probe_02",
+  "allowed_numerical_failure_stages": {
+    "fullscale_alternating": ["fft", "log_mel", "dct", "mfcc"],
+    "tone_bin32_1000hz": ["log_mel", "dct", "mfcc"]
+  },
+  "requirements": "All structural checks, core tests and host-I/O tests must pass; development speech must pass. Reproduce the documented precision diagnosis before freezing. Unknown failures stop evaluation. Final status remains completed_with_numerical_failures (exit 2) when any numerical test fails.",
+  "diagnosis": "Full-scale alternating preemphasis equals correctly rounded binary32 of the float64 reference but loses 6.25% of a small DC imbalance; ideal float64 continuation still exceeds the MFCC target. Tiny Mel energies close to 1e-12 amplify frontend/FFT quantization in ln. Tone weak bands are also sensitive. This is a measured limit of this scalar binary32 implementation, not a proof about every float32 algorithm.",
+  "invariants": "Do not alter input PCM, Python truth, shared equations, 1e-12 log floor, coefficients or final target to hide failures. This policy is fixed before evaluation and does not whitelist evaluation failures."
+}

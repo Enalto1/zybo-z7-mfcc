@@ -1,0 +1,16 @@
+{
+  "schema_version": 1,
+  "python_root": "D:/2610_MFCC/build/python_reference/reproduce_01",
+  "c_root": "D:/2610_MFCC/build/c_reference/reproduce_01",
+  "python_run_manifest_sha256": "9a73021951e2057f80833e1930e1d9973bee1675cec9527c464f915a6d830140",
+  "python_artifact_manifest_sha256": "dbd2678abf8273642396edfa153eb642636e26bcdc69f9db40f06839deddb243",
+  "c_run_manifest_sha256": "781fad7ad09212a466a4716b66cd137e807626f7cd3cada79e2f3ce87c262f1d",
+  "c_artifact_manifest_sha256": "e4abda3effe428e36f055965179d33e75e86c3c751753625952c63f6b3c41d85",
+  "development_clip": "8463-294828-0037",
+  "development_samples": 85920,
+  "development_frames": 534,
+  "evaluation_clips": 20,
+  "evaluation_frames": 9501,
+  "synthetic_clips": 17,
+  "synthetic_frames": 40
+}

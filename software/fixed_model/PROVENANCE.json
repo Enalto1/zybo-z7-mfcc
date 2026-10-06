@@ -1,0 +1,47 @@
+{
+  "schema_version": 1,
+  "purpose": "Record the origin, hash and verified behaviour of every reused artefact in software/fixed_model, as required by docs/NEXT_TASK_CLAUDE_FIXED_POINT.md section 3.",
+  "recorded": "2026-10-04 Asia/Seoul",
+  "reused": [
+    {
+      "file": "fft_bitmodel.py",
+      "sha256": "87bb1ea7d956ba8ea91b3e635d77c53739b387a313522809a38621cd25a0438a",
+      "copied_from": "D:/2610_MFCC/build/claude-review/fft_model.py",
+      "copy_is_byte_identical": true,
+      "written_by": "Claude Code during the FFT reuse review (docs/reviews/FFT_REUSE_REVIEW.md section 2.2)",
+      "derived_from": "Read-only analysis of D:/2610_MFCC/reference_code/previous_fft/rtl/** only. Not derived from the previous project's MATLAB model.",
+      "supported_sizes": "cfg_log2_n 3..10, i.e. N = 8,16,32,64,128,256,512,1024. The MFCC path uses N=512 (log2 N = 9).",
+      "fixed_configuration": "data signed 16 bit F15; twiddle signed 16 bit F15 from twiddle_1024_w16.mem; Type-I growth 1 bit (16->17); Type-II growth 1 bit (17->18); twiddle product 35 bit accumulated then >>15 to 18 bit; complete-group shift >>2 to 16 bit; trailing unpaired Type-I shift >>1 to 16 bit. Total reduction S = log2 N, so S = 9 at N = 512.",
+      "rounding_behaviour": "Every bit-reducing boundary uses convergent rounding (ties to even), matching rtl/common/fixed_round_shift.sv with ROUND_CONVERGENT=1.",
+      "overflow_behaviour": "WRAP, not saturate. rtl/common/fixed_round_shift.sv:69 keeps only the low OUT_W bits; line 72 only detects the lost sign extension. The model reproduces the wrap and returns a sticky per-frame overflow flag.",
+      "output_order": "fft_fixed() returns bit-reversed bin order (core output). fft_fixed_natural() returns natural bin order, matching rtl/reorder/natural_reorder_pingpong.sv.",
+      "verification_evidence": [
+        "Twiddle ROM independently recomputed from cos/sin(-2*pi*a/1024) in Q1.15 with ties-to-even and coefficient saturation: all 1024 entries match.",
+        "Bit-exact against the previous project's own Phase 6 expected vectors (5 cases, N=16 and N=1024): 0 mismatches.",
+        "Bit-exact against RTL simulation of fft_stream_top in 29 scenarios under Vivado 2020.2 and 2024.2: 22720 out_valid beats, 0 mismatches, byte-identical CSV across both tool versions. See D:/2610_MFCC/build/claude-review-2024_2/logs/RESULTS_2024_2.txt."
+      ],
+      "not_verified": [
+        "No board execution of the FFT exists. See docs/reviews/FFT_REUSE_REVIEW.md section 2.7.",
+        "N = 8 and N = 32 were never simulated; N=64/128/1024 have 1 scenario each and N=256 has 2."
+      ],
+      "modification_policy": "Reused verbatim. Not rewritten for style. docs/RTL_CODING_RULES.md section 1 E-FFT scope applies to the RTL it models."
+    },
+    {
+      "file": "coefficients/twiddle_1024_w16.mem",
+      "sha256": "b36956acf6ab9589a397196111f8e9b34e48242260b4c5106b9f3c2a5199f2ca",
+      "copied_from": "D:/2610_MFCC/reference_code/previous_fft/matlab/generated/twiddle_1024_w16.mem",
+      "copy_is_byte_identical": true,
+      "format": "1024 lines, 8 hex digits each, packed {real[15:0], imag[15:0]}, signed Q1.15",
+      "content": "W_1024^a = exp(-j*2*pi*a/1024), convergent rounding, coefficient-only saturation so +1.0 becomes 32767",
+      "note": "The reference_code original is unmodified. This repository copy exists so the integer model is reproducible from the repository alone."
+    }
+  ],
+  "read_only_inputs": {
+    "purpose": "Frozen float64 reference artefacts read but never written by this work.",
+    "paths": [
+      "D:/2610_MFCC/build/python_reference/reproduce_01/development/8463-294828-0037/comparison_raw13/",
+      "D:/2610_MFCC/build/python_reference/reproduce_01/synthetic/<id>/comparison_raw13/",
+      "D:/2610_MFCC/build/python_reference/reproduce_01/coefficients/comparison_raw13/"
+    ]
+  }
+}

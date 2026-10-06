@@ -1,0 +1,17 @@
+{
+  "schema_version": 1,
+  "comparison": "Python float64 model versus explicitly adapted python_speech_features 0.6 stages",
+  "atol": 1e-10,
+  "rtol": 1e-10,
+  "profiles": {
+    "comparison_raw13": {"atol": 1e-10, "rtol": 1e-10},
+    "github_static13": {"atol": 1e-7, "rtol": 1e-10}
+  },
+  "criterion": "abs(actual-reference) <= atol + rtol*abs(reference) at every element; exact shapes, indices and finite values required",
+  "rationale": "Different FFT backends, squared-magnitude evaluation and DCT summation order introduce float64 rounding. A 1e-10 absolute floor protects near-zero coefficients; a 1e-10 relative term also covers large PCM-count-unit power values in the source-check profile. This is much tighter than the proposed float32 C/HW threshold. It is fixed before evaluation, not fitted to evaluation clips.",
+  "scope": "Python float64 only; not a float32 hardware or fixed-point acceptance budget",
+  "development_revision": "dev_probe_01 (before any evaluation) preserved failures for source-profile small/full-scale alternating PCM. Raw-count FFT cancellation, zero-only log and lifter produced synthetic MFCC max absolute error about 1.93e-8. Set source-check absolute tolerance to 1e-7; keep comparison_raw13 unchanged. High-magnitude raw power uses the relative term. No input, algorithm or package edits to hide differences.",
+  "synthetic_seed": 20261004,
+  "synthetic_rng": "numpy.random.Generator(PCG64)",
+  "evaluation_policy": "Abort before evaluation if development/synthetic gates fail; bind profiles, tolerance, implementation, verifier, spec and environment hashes in freeze.json. Record native-package policy differences separately from pass/fail comparisons."
+}

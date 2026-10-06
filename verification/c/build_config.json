@@ -1,0 +1,9 @@
+{
+  "schema_version": 1,
+  "compiler_family": "msvc",
+  "vcvars64": "C:/Program Files/Microsoft Visual Studio/2022/Community/VC/Auxiliary/Build/vcvars64.bat",
+  "flags": ["/nologo", "/TC", "/std:c11", "/O2", "/fp:strict", "/W4", "/WX", "/MD"],
+  "floating_point": "binary32 operands and temporaries, no fast-math, no FMA contraction under /fp:strict, no excess float evaluation; round-to-nearest-ties-to-even",
+  "documentation": "https://learn.microsoft.com/en-us/cpp/build/reference/fp-specify-floating-point-behavior?view=msvc-170",
+  "scope": "Windows x64 PC validation. C core is C11 and platform-independent; ARM build must separately record its compiler, libm and floating-point ABI/options."
+}

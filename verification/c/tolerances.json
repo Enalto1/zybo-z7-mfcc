@@ -1,0 +1,28 @@
+{
+  "schema_version": 1,
+  "comparison": "C binary32 stages versus frozen comparison_raw13 Python binary64 arrays",
+  "criterion": "abs(C-Python) <= atol + rtol*abs(Python), every element; complex FFT uses error magnitude",
+  "default": {"atol": 0.001, "rtol": 0.00001},
+  "stages": {
+    "input_float": {"atol": 0.0, "rtol": 0.0},
+    "preemphasis": {"atol": 0.0000002, "rtol": 0.000002},
+    "frames": {"atol": 0.0000002, "rtol": 0.000002},
+    "windowed": {"atol": 0.0000002, "rtol": 0.000002},
+    "fft": {"atol": 0.00002, "rtol": 0.00002},
+    "power": {"atol": 0.00000001, "rtol": 0.00005},
+    "mel_energies": {"atol": 0.00000001, "rtol": 0.00005},
+    "frame_energy": {"atol": 0.00000001, "rtol": 0.00005},
+    "log_mel": {"atol": 0.001, "rtol": 0.00001},
+    "dct": {"atol": 0.001, "rtol": 0.00001},
+    "mfcc": {"atol": 0.001, "rtol": 0.00001}
+  },
+  "rationale": {
+    "input_float": "PCM16 division by power-of-two 32768 is exact in binary32.",
+    "preemphasis_frames_windowed": "Normalized sample amplitudes, coefficient conversion and two separately rounded float operations; absolute term covers cancellation and relative term covers headroom up to 1.95.",
+    "fft": "Unnormalized 512-point transform has a larger scale and nine butterfly stages; account for accumulated binary32 rounding with 2e-5 absolute and relative budgets. Small spectral values also undergo stricter downstream log/MFCC tests.",
+    "power_mel_energy": "Squared normalized amplitude units: 1e-8 absolute floor plus 5e-5 relative budget for squares and sequential positive sums. Passing near-zero energy under this bound alone does not prove log accuracy.",
+    "log_mel": "Natural-log dimensionless units; initial 1e-3 absolute +1e-5 relative budget. Expose weak-energy sensitivity rather than modifying the common 1e-12 floor.",
+    "dct_mfcc": "User/MFCC_SPEC initial target 1e-3 +1e-5*abs(Python). No relaxation based on evaluation results."
+  },
+  "policy": "Develop synthetic17+development1 first. Freeze source, coefficients, compiler/options, tolerance, reference identity before evaluation20. Preserve unsuccessful development runs."
+}

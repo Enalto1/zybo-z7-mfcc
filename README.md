@@ -2,7 +2,7 @@
 
 ZYBO Z7-20에서 MFCC 음성 특징 추출기를 구현하고 Python·ARM C·FPGA 결과를 비교하기 위한 개발 저장소입니다. 저장소 이름은 `zybo-z7-mfcc`입니다.
 
-현재는 개발 폴더와 인수인계 문서를 준비하는 단계입니다. MFCC 구현 완료나 성능 우위를 의미하지 않습니다.
+ARM C와 고정소수점 RTL의 기존 보드 실행 결과는 [보드 검증 기록](docs/BOARD_VALIDATION_RESULTS.md)에 있습니다. FP32·고정소수점 RTL은 DMA/인터럽트 통합 후 실제 보드에서 각각 예열3회·측정30회 및 모든 출력의 독립 감사를 완료했습니다. 결과와 정확도 한계, 측정 구간은 [DMA 통합 검증 기록](docs/DMA_SYSTEM_BOARD_RESULTS.md)에 있습니다. 개발 음성 결과를 전체 입력의 정확도나 성능 우위로 일반화하지 않습니다.
 
 ## 시작하기
 
@@ -47,6 +47,14 @@ Vivado IP 설정, 제약, 계수 및 메모리 초기화 파일은 개발 소스
 ## 참고 프로젝트
 
 [Simple Voice Activity Detector using MFCC based on FPGA Kintex](https://github.com/AlexKly/Simple-Voice-Activity-Detector-using-MFCC-based-on-FPGA-Kintex)를 출발점으로 검토합니다. 원본의 출처·라이선스·기준 버전을 확인하고, 가져온 부분과 수정한 부분을 구분합니다.
+
+## RTL 코딩과 고정소수점 개발
+
+- [RTL 코딩 규약](docs/RTL_CODING_RULES.md): 신규 RTL 작성 시 필수 적용.
+- [양자화·고정소수점 개발 절차](docs/FIXED_POINT_DEVELOPMENT.md): float32 C와 정수 비트모델의 역할 및 검증 단계.
+- [고정소수점 설계 변경 이력](docs/FIXED_POINT_DESIGN_HISTORY.md): FFT 폭·배율 변경의 이유와 수치 근거, 남은 오차, 별도 fixed C 계획. 이후 양자화 변경도 이 문서에 기록.
+- [Claude 다음 작업](docs/NEXT_TASK_CLAUDE_FIXED_POINT.md): 양자화 계약과 부분 정수 경로 실험.
+- 도구별 시작 지침은 [AGENTS.md](AGENTS.md), [CLAUDE.md](CLAUDE.md)를 따릅니다.
 
 ## 협업과 검증
 

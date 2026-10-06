@@ -17,6 +17,8 @@
 | 항목 | 사용자 의도와 제약 |
 |---|---|
 | 대상 보드 | ZYBO Z7-20 |
+| 도구 | Vivado 2024.2; Vitis/ARM 플랫폼 연동은 별도 확인 |
+| 입력 | LibriSpeech test-clean 공통 PCM 21개. 실시간 마이크/I2S/코덱 제외 |
 | 출발점 | 아래 GitHub 프로젝트를 참고하고 필요한 부분을 이식 |
 | 개발 흐름 | Python 모델 → C 모델 → 하드웨어 구현과 검증 |
 | 계획한 비교군 | Python, ARM C, 부동소수점 IP 기반 HW, 고정소수점 custom RTL HW |
@@ -52,23 +54,13 @@ https://github.com/AlexKly/Simple-Voice-Activity-Detector-using-MFCC-based-on-FP
 
 이전에 개발한 FFT는 사용자가 확인한 `D:\20260824_FFT`에서 전체를 `D:\2610_MFCC\reference_code\previous_fft`로 복사했다. 기존 README에는 구조·수치 형식·시뮬레이션 및 구현 결과가 있으나 이번 준비 작업에서 재현하지 않았다. 재사용을 결정하기 전에 관련 RTL과 테스트를 확인하며, 임의 backpressure 제한과 실제 보드 검증 미완료 기록을 검토한다.
 
-## 아직 확정하지 않은 규격
+## 공통 규격과 현재 구현 상태
 
-다음 항목은 기존 보고서나 라이브러리 기본값에서 임의로 가져오지 않는다. 원본 설계와 기존 FFT를 점검한 뒤 공통 규격 문서 한 곳에서 확정한다.
+Python 기준 모델은 구현·검증을 완료했다. [PYTHON_REFERENCE_RESULTS.md](PYTHON_REFERENCE_RESULTS.md)와 D:/2610_MFCC/build/python_reference/reproduce_01에 합성 17개·개발 1개·평가 20개의 단계별 기준값, 입력/계수/소스 해시와 실행 기록이 있다. 개발 출력은 534×13, 평가 합계는 9,501×13이다.
 
-- 입력 PCM의 샘플링 주파수, 채널 수, 비트 폭과 진폭 정규화.
-- 프리엠퍼시스 사용 여부와 계수, 프레임 길이와 이동 간격.
-- 프레임 경계·패딩·마지막 프레임 처리, 윈도 함수와 계수.
-- FFT 길이, 부호, 출력 bin 순서, 내부·출력 스케일링.
-- 크기 또는 파워 스펙트럼의 정의와 정규화.
-- Mel 변환식, 주파수 범위, 필터 수, 필터 가중치와 정규화.
-- 로그 밑과 하한값, DCT 유형·정규화, MFCC 계수 수.
-- C0·프레임 에너지 대체, lifter, delta·delta-delta의 포함 여부.
-- 고정소수점 단계별 비트 폭과 소수부, 반올림·포화 정책.
-- 프레임 및 계수 출력 순서, 허용 오차, 목표 처리량과 자원 예산.
-- ARM과 HW 간 데이터 경로, DMA·인터럽트·폴링 방식과 측정 범위.
+본 비교 comparison_raw13은 PCM16 /32768, 연속 pre-emphasis 0.95, 512/160 완전 프레임, symmetric Hamming, 비정규화512 FFT, 편측 power /512, HTK Mel26, ln(max(E,1e-12)), 정규직교 DCT-II C0…C12이다. lifter·에너지 대체·delta는 없다. 공통 수학 정의는 [MFCC_SPEC.md](MFCC_SPEC.md)를 유지한다. GitHub 설정 확인용 프로파일과 섞지 않는다.
 
-기존 보고서에는 서로 다른 설정의 실험이 포함되어 있으므로 하나의 일관된 규격으로 간주하지 않는다. 이번 비교에 사용할 수치와 연산 정의를 별도로 검증한다.
+C float32 계산 코어와 PC 검증의 실측 상태·제한은 C_REFERENCE_RESULTS.md를 따른다. 계산 코어를 파일 입출력·타이머에서 분리하고 합성/개발 뒤 조건을 고정해 평가한다. ARM 실행 시간·보드 입출력·FP IP 전체 수치 검증·fixed 비트 폭과 로그 근사는 별도 미확정 항목이다. Python 통과를 네 비교군 전체 완료로 해석하지 않는다.
 
 ## 검증과 성능 비교 원칙
 
@@ -84,10 +76,16 @@ https://github.com/AlexKly/Simple-Voice-Activity-Detector-using-MFCC-based-on-FP
 
 ## 구현 우선순위 제안
 
-먼저 저장된 공통 입력으로 기준 모델과 기존 HW의 한 경로를 끝까지 검증하고, 보드에서 계수를 회수하는 경로를 확보하는 것을 권장한다. 실시간 마이크·코덱 연결과 추가 기능의 우선순위는 일정에 맞춰 결정한다.
+확보된 Python 단계별 기준값으로 먼저 PC C의 전체 MFCC 경로를 검증한다. 이후 보드에서 계수를 회수하는 경로를 확보한다. 실시간 마이크·코덱 연결은 이번 범위에서 제외한다.
 
 네 비교군을 모두 완성하는 것은 목표이며 완료 사실이 아니다. 초기 코드 점검 뒤 제출 전에 확보할 필수 결과와 추가 구현 범위를 나눈다. 기존 FFT는 검증에 통과한 경우 재사용하며, 모든 FFT를 새로 작성하는 것을 선행 조건으로 만들지 않는다.
 
 ## 다음 작업
 
-[첫 개발 작업](FIRST_TASK.md)의 점검을 수행하고 `SOURCE_AUDIT.md`와 `MFCC_SPEC.md`를 작성한다. 이 두 파일은 앞으로 만들 산출물이며 현재 생성되어 있지 않다. 점검이 끝나면 여기의 미확정 항목과 현재 상태를 갱신한다.
+초기 점검 결과인 [SOURCE_AUDIT.md](SOURCE_AUDIT.md)와 [MFCC_SPEC.md](MFCC_SPEC.md)가 생성되어 있다. 문서 존재는 MFCC 구현 통과를 의미하지 않는다. [NEXT_TASK_PYTHON.md](NEXT_TASK_PYTHON.md)의 Python 작업은 완료했다. C PC 검증 결과는 C_REFERENCE_RESULTS.md에 기록하고, 다음 ARM 실행의 플랫폼·컴파일러·입출력·측정 조건은 별도로 준비한다.
+
+Claude Code는 사용자가 보고한 현재 상태에서 기존 FFT를 검토 중이다. docs/reviews/FFT_REUSE_REVIEW.md와 D:/2610_MFCC/build/claude-review는 Claude 담당이며 다른 작업이 수정하지 않는다. Codex의 C 작업은 검토 완료를 기다리지 않고 진행한다. FFT 규격 확정과 RTL 수정은 검토 결과를 받은 뒤 진행한다.
+
+공통 입력은 D:/2610_MFCC/data/librispeech/DATASET_MANIFEST.json이다. 개발용 1개와 별도 평가용 20개를 구분한다. 데이터 준비용 Python 환경과 MFCC 모델 실행 환경은 별개다.
+
+출처 관리는 D:/2610_MFCC/references/README.md, CITATION_AND_WRITING_RULES.md, CLAIM_EVIDENCE.csv, bibliography/references.bib를 따른다. 확인한 문헌·페이지와 직접 읽은 범위를 남기고 문헌의 주장·설계 선택·측정 결과를 구분한다. 논문·발표·음성·원문 PDF는 Git 밖에 둔다.

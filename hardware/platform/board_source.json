@@ -1,0 +1,16 @@
+{
+  "repository": "https://github.com/Digilent/vivado-boards",
+  "commit": "36f34ab687b7fa9c778b779d027f3bce63b3ace9",
+  "board_part": "digilentinc.com:zybo-z7-20:part0:1.2",
+  "target_part": "xc7z020clg400-1",
+  "board_file_revision": "A.0",
+  "compatible_revision_as_declared": "B.2",
+  "physical_board_revision": "unverified",
+  "license": "MIT; repository License.txt copyright 2021; board XML files preserve their embedded notices",
+  "files": [
+    {"upstream": "new/board_files/zybo-z7-20/A.0/board.xml", "local": "board_files/zybo-z7-20/A.0/board.xml", "sha256": "650c4ca19979c156f059eee2b2f9a1862cbc1eb25927f2ab1d1904968ab342cc"},
+    {"upstream": "new/board_files/zybo-z7-20/A.0/part0_pins.xml", "local": "board_files/zybo-z7-20/A.0/part0_pins.xml", "sha256": "62a5f2d025828c3a400734e457e75584db43e40e6065a26a4e5351cd50989ad3"},
+    {"upstream": "new/board_files/zybo-z7-20/A.0/preset.xml", "local": "board_files/zybo-z7-20/A.0/preset.xml", "sha256": "f1da413772d4be2d6c2a703ceb54502304840e11fe8fd8c2b02dc450c86335e6"},
+    {"upstream": "License.txt", "local": "License.txt", "sha256": "28a42137bb9c77a6aa931c5ca670134620f448051dbd708a05921280a7b277ba"}
+  ]
+}

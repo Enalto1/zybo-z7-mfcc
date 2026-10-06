@@ -1,0 +1,128 @@
+{
+  "exception": "E-FFT in docs/RTL_CODING_RULES.md",
+  "support": "fixed MFCC integration uses cfg_log2_n9 only; output cannot stall",
+  "numeric": "signed20/F19 data,16/F15 twiddle,typeI21,typeII22,product38,accum39,RNE wrap,S9",
+  "files": [
+    {
+      "source": "D:\\2610_MFCC\\reference_code\\previous_fft\\rtl\\top\\fft_stream_top.sv",
+      "source_sha256": "0ec92929a1f7bc078531b64e1109f4e91f24de25859624c2b4e6463eb4fc463f",
+      "copy": "fft20_stream_top.sv",
+      "copy_sha256": "8c46b96d2db2dbb4391eb9de1214938b6010b2d94a037269d870fc125cdee3fa",
+      "changes": [
+        "module identifiers prefixed fft20_ to isolate E-FFT copy",
+        "datapath signed16 to signed20; scheduling and counters unchanged"
+      ]
+    },
+    {
+      "source": "D:\\2610_MFCC\\reference_code\\previous_fft\\rtl\\top\\fft_r22sdf_core.sv",
+      "source_sha256": "3a6fb321900c0948067095575ac62b6580e9d6b62de8a4c128453e87f31b0565",
+      "copy": "fft20_fft_r22sdf_core.sv",
+      "copy_sha256": "4b165f7e6410ddd9996dc3928c16a3327a0b8eb2fb9c5a1ac45be9e90ae3dfbe",
+      "changes": [
+        "module identifiers prefixed fft20_ to isolate E-FFT copy",
+        "datapath signed16 to signed20; scheduling and counters unchanged"
+      ]
+    },
+    {
+      "source": "D:\\2610_MFCC\\reference_code\\previous_fft\\rtl\\reorder\\natural_reorder_pingpong.sv",
+      "source_sha256": "b78fc21865d0a0cda78c5be53c5a679860056c8c7eb78bb228793d00d6966ce0",
+      "copy": "fft20_natural_reorder_pingpong.sv",
+      "copy_sha256": "171b0fea5fd68c7b676482950f3e0a8f604da08e3aa6cec27ab18493ddbc9dfb",
+      "changes": [
+        "module identifiers prefixed fft20_ to isolate E-FFT copy",
+        "block RAM inference requested for four synchronous read reorder banks; no array reset",
+        "after actual8-6849 fallback: combine banks into2048x40simpledualport, separate unreset synchronous read; unchanged onebeat latency, same bankbit address"
+      ]
+    },
+    {
+      "source": "D:\\2610_MFCC\\reference_code\\previous_fft\\rtl\\reorder\\bit_reverse_addr.sv",
+      "source_sha256": "a398d81dda7006cad20402561c1c4c56e6a822dca27524027dbc695f8694fd66",
+      "copy": "fft20_bit_reverse_addr.sv",
+      "copy_sha256": "7a87be263568d1b629a3eb222345fc47b8fde967e8330c771a7324f7a99bd0ea",
+      "changes": [
+        "module identifiers prefixed fft20_ to isolate E-FFT copy"
+      ]
+    },
+    {
+      "source": "D:\\2610_MFCC\\reference_code\\previous_fft\\rtl\\r22sdf\\r22sdf_runtime_stage.sv",
+      "source_sha256": "a0d031497e2fa72bfcf7c151faef08ae829f1f71914fe660168500eb7c5bf4af",
+      "copy": "fft20_r22sdf_runtime_stage.sv",
+      "copy_sha256": "411cec2959f7509194a1b89184594c876e3f5a1fddd33851ffc5e1835d492880",
+      "changes": [
+        "module identifiers prefixed fft20_ to isolate E-FFT copy"
+      ]
+    },
+    {
+      "source": "D:\\2610_MFCC\\reference_code\\previous_fft\\rtl\\r22sdf\\r22sdf_runtime_group.sv",
+      "source_sha256": "d1a99160598817d7858e3fbf790cc90f14b7e2c95514c0d4f58100a1c143130e",
+      "copy": "fft20_r22sdf_runtime_group.sv",
+      "copy_sha256": "9cc6ac00e5779db78a64ea17e33c8948795933ba90e9f9155d6bcb8916817712",
+      "changes": [
+        "module identifiers prefixed fft20_ to isolate E-FFT copy",
+        "group signed20, typeI signed21, typeII signed22, rounding shifts unchanged"
+      ]
+    },
+    {
+      "source": "D:\\2610_MFCC\\reference_code\\previous_fft\\rtl\\r22sdf\\r22sdf_runtime_group_quantize.sv",
+      "source_sha256": "5af5acc0c7b16ce16be993e529da8bbe6c869b50533ff19602d60ebaf8560607",
+      "copy": "fft20_r22sdf_runtime_group_quantize.sv",
+      "copy_sha256": "7b8b930076aeeda5793a59d4e4ef61b2b74b97e382c1eb0fbc6615be93fb0dd0",
+      "changes": [
+        "module identifiers prefixed fft20_ to isolate E-FFT copy",
+        "full product38/accum39; twiddle stays16/F15, rounded22 then group20"
+      ]
+    },
+    {
+      "source": "D:\\2610_MFCC\\reference_code\\previous_fft\\rtl\\r22sdf\\r22sdf_runtime_twiddle_addr_gen.sv",
+      "source_sha256": "7d0536c5a3b73d209078d704ccc7d1e7522a03a4ade0b842d6d8c724f8f8de2c",
+      "copy": "fft20_r22sdf_runtime_twiddle_addr_gen.sv",
+      "copy_sha256": "101b014d1870729851df55b1d919f5c4bda304cb147085a166a342b9c9f7f2f5",
+      "changes": [
+        "module identifiers prefixed fft20_ to isolate E-FFT copy"
+      ]
+    },
+    {
+      "source": "D:\\2610_MFCC\\reference_code\\previous_fft\\rtl\\r22sdf\\twiddle_rom_sync.sv",
+      "source_sha256": "bd65c08fa0f98580d1be0cbefad46630ce2b57bed4d9c7e00f6e18c6d48029de",
+      "copy": "fft20_twiddle_rom_sync.sv",
+      "copy_sha256": "0bac4c632ac4df3215719af2e22d769786f9eb49b64f746bfe80ba1a4712e3ea",
+      "changes": [
+        "module identifiers prefixed fft20_ to isolate E-FFT copy"
+      ]
+    },
+    {
+      "source": "D:\\2610_MFCC\\reference_code\\previous_fft\\rtl\\r22sdf\\bf_type1.sv",
+      "source_sha256": "d21c127115113d2369808890b4e3646bfa44616860b3aa1f3b4d1969988fa91a",
+      "copy": "fft20_bf_type1.sv",
+      "copy_sha256": "580721f809500ec9ae099c882ba54365dec3eeba6bd953e9d05e237df7742e58",
+      "changes": [
+        "module identifiers prefixed fft20_ to isolate E-FFT copy"
+      ]
+    },
+    {
+      "source": "D:\\2610_MFCC\\reference_code\\previous_fft\\rtl\\r22sdf\\bf_type2.sv",
+      "source_sha256": "f650d96576be597b6d6375e34f6b035828f9dea7a495bbba215cfd6156eba60e",
+      "copy": "fft20_bf_type2.sv",
+      "copy_sha256": "aa4fdd38fe0090f2d2510b7cfafeb2090ace179657af79feb7ee1c82519cf1aa",
+      "changes": [
+        "module identifiers prefixed fft20_ to isolate E-FFT copy"
+      ]
+    },
+    {
+      "source": "D:\\2610_MFCC\\reference_code\\previous_fft\\rtl\\common\\fixed_round_shift.sv",
+      "source_sha256": "79c071ea78800203116364a3e36961ce924ce99221150d4bf6ae360871a6f285",
+      "copy": "fft20_fixed_round_shift.sv",
+      "copy_sha256": "bbe95157215bef8522da818bf9139acc1336e0013b320a073ad1c3cdd862d5aa",
+      "changes": [
+        "module identifiers prefixed fft20_ to isolate E-FFT copy"
+      ]
+    },
+    {
+      "source": "D:\\2610_MFCC\\reference_code\\previous_fft\\matlab\\generated\\twiddle_1024_w16.mem",
+      "source_sha256": "b36956acf6ab9589a397196111f8e9b34e48242260b4c5106b9f3c2a5199f2ca",
+      "copy": "twiddle_1024_w16.mem",
+      "copy_sha256": "b36956acf6ab9589a397196111f8e9b34e48242260b4c5106b9f3c2a5199f2ca",
+      "changes": []
+    }
+  ]
+}
