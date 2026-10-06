@@ -1,7 +1,7 @@
 # 고정소수점 양자화 계약 (Q0)
 
-작성: 2026-10-04 Asia/Seoul. 작성자: Claude Code(고정소수점 수치 설계·RTL 검증 담당).
-정정: 2026-10-04, 사용자 인계 지시에 따라 Codex가 고정소수점 수치 실험을 이어받았다.
+작성: 2026-10-04 Asia/Seoul. 작성 범위: 고정소수점 수치 설계·RTL 검증.
+정정: 2026-10-04, 사용자 인계 지시에 따라 고정소수점 수치 실험을 이어받았다.
 범위: [FIXED_POINT_DEVELOPMENT.md](../FIXED_POINT_DEVELOPMENT.md) 4장의 **Q0**.
 16비트 선행 실험은 [FIXED_POINT_PILOT.md](FIXED_POINT_PILOT.md), 확장 후보 비교는
 [FIXED_POINT_PRECISION_REVIEW.md](FIXED_POINT_PRECISION_REVIEW.md)에 있다.

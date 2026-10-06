@@ -142,7 +142,7 @@ N=512, S=9 확인 시: P = 2048*(Re(F)^2 + Im(F)^2)
 | DCT·출력 | signed 고정소수점; PC에서 명시한 2^-F로 복원 | 누적 폭·출력 F 미확인; 결과 비교 전에 고정 |
 | overflow 정책 | 기존 FFT wrap+sticky를 비트모델에 그대로 반영; 통과 벡터는 overflow=0 요구 | 신규 stage 포화/wrap 선택은 미확인; 임의 교체 금지 |
 
-Claude Code의 정확한 검토 경로는 `D:\2610_MFCC\project\docs\reviews\FFT_REUSE_REVIEW.md`이다. 감사 시점에 없었으며 파일을 기다리거나 생성·수정하지 않았다. 검토가 들어오면 위 FFT 계약과 충돌을 확인한 뒤 규격을 갱신한다.
+FFT 재사용 검토의 경로는 `docs/reviews/FFT_REUSE_REVIEW.md`이다. 감사 시점에 없었으며 파일을 기다리거나 생성·수정하지 않았다. 검토가 들어오면 위 FFT 계약과 충돌을 확인한 뒤 규격을 갱신한다.
 
 ## 6. 프레임 전달·보드 인터페이스 제안
 

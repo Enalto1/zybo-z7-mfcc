@@ -6,7 +6,7 @@ peak 1 and no area normalization) and is cross-checked against the frozen
 reference table before it is used.  The frozen table is read, never written.
 
 The integer table is ``w_int[m][k] = round_half_even(B[m][k] * 2**Fw)``.  Fw is
-a *candidate*, not a fixed decision: docs/NEXT_TASK_CLAUDE_FIXED_POINT.md
+a *candidate*, not a fixed decision: docs/NEXT_TASK_FIXED_POINT.md
 section 4 requires Fw=16 to be treated as a candidate only, so the generator
 takes Fw as an argument and :func:`coefficient_error_sweep` measures what each
 choice costs on its own.

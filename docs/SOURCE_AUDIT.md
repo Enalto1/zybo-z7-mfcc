@@ -1,5 +1,7 @@
 # MFCC 소스·도구 감사
 
+> 이 문서가 인용하는 로그는 저장소에 포함되지 않는 로컬 감사 폴더에 있다. 본문에서는 `<감사 폴더>`로 표기한다.
+
 작성: 2026-10-04, Asia/Seoul. 대상: ZYBO Z7-20의 AI 음성 특징 추출 및 재현 가능한 네 구현 비교. 공통 수치 규격은 [MFCC_SPEC.md](MFCC_SPEC.md)를 따른다.
 
 **결론:** 참고 GitHub의 MFCC 계수와 주요 IP 설정은 확보되어 있다. 그러나 배포된 top은 39개 특징을 DNN에 넘기는 Kintex VAD 설계이며, 그대로 ZYBO MFCC 완성품으로 취급할 수 없다. Vivado **2024.2에서 authored HDL 15개의 구문 분석은 통과**했지만, Zynq 대상의 **IP 9개는 모두 locked/Upgrade IP 권고**였다. 전송·reset·CDC·pre-emphasis 정렬·IP 재생성을 검증해야 한다. 우선 저장 PCM에서 raw 13계수까지 Python/C를 완성하고 ARM에서 회수하는 전체 경로를 확보한 뒤, 동일 경계를 PL에 이식한다. 네 비교군의 구현·검증·보드 동작은 아직 완료 사실이 아니다.
@@ -17,7 +19,7 @@
 
 먼저 `README.md`, `docs/DEVELOPMENT_HANDOFF.md`, `docs/FIRST_TASK.md`, `docs/REFERENCE_SOURCES.md`를 읽었다. 작업 시작 Git 상태는 깨끗했고 HEAD는 `e679534de5b2f9f2222dc06d3f9ac0a4a7fe8db9` (`docs: record reference snapshots and handoff status`)였다. 개발 저장소에는 구현 소스가 아직 없고 문서와 폴더 골격이 있다. 작업 위치와 상위에서 적용되는 AGENTS.md는 검색되지 않았다.
 
-이번 변경 파일은 이 문서와 `MFCC_SPEC.md` 두 개다. 실행 점검용 소수의 소스·설정 복사본과 로그는 `D:\2610_MFCC\build\codex-audit`에만 뒀다. 원본 reference, Claude 검토 파일, RTL 구현, Git commit/push, 프로젝트 전체 복제, 논문·발표 자료는 변경하지 않았다.
+이번 변경 파일은 이 문서와 `MFCC_SPEC.md` 두 개다. 실행 점검용 소수의 소스·설정 복사본과 로그는 `<감사 폴더>`에만 뒀다. 원본 reference, FFT 검토 파일, RTL 구현, Git commit/push, 프로젝트 전체 복제, 논문·발표 자료는 변경하지 않았다.
 
 ## 2. 소스 식별과 무결성
 
@@ -156,7 +158,7 @@ Digilent 매뉴얼에 PL 125MHz는 Ethernet PHY reset의 영향을 받는다고 
 
 ## 8. 로컬 도구와 직접 실행 검사
 
-상세 실행 명령·stdout·exit는 [tool_versions.txt](D:/2610_MFCC/build/codex-audit/toolcheck/tool_versions.txt), [additional_tools.txt](D:/2610_MFCC/build/codex-audit/toolcheck/additional_tools.txt)에 있다. PATH 검색 실패는 PC 전체에 미설치라는 뜻이 아니다.
+상세 실행 명령·stdout·exit는 [tool_versions.txt](<감사 폴더>/toolcheck/tool_versions.txt), [additional_tools.txt](<감사 폴더>/toolcheck/additional_tools.txt)에 있다. PATH 검색 실패는 PC 전체에 미설치라는 뜻이 아니다.
 
 | 도구 | 이번 직접 확인 | 범위와 한계 |
 |---|---|---|
@@ -176,7 +178,7 @@ Digilent 매뉴얼에 PL 125MHz는 Ethernet PHY reset의 영향을 받는다고 
 
 ### 2020.2 참고 구문·part 검사
 
-15개 authored HDL 파일(Verilog14 + `get_frames.vhd`)만 `build/codex-audit/toolcheck/syntax`에 복사했다. 작업 폴더에서 다음을 실행했다.
+15개 authored HDL 파일(Verilog14 + `get_frames.vhd`)만 `<감사 폴더>/toolcheck/syntax`에 복사했다. 작업 폴더에서 다음을 실행했다.
 
 ```powershell
 & 'D:\Xilinx\Vivado\2020.2\bin\xvhdl.bat' get_frames.vhd
@@ -185,15 +187,15 @@ $auditVerilog = @(Get-ChildItem -LiteralPath . -Filter '*.v' -File |
 & 'D:\Xilinx\Vivado\2020.2\bin\xvlog.bat' @auditVerilog
 ```
 
-둘 다 exit0. [명령 기록](D:/2610_MFCC/build/codex-audit/toolcheck/syntax/COMMANDS.txt), [xvhdl.log](D:/2610_MFCC/build/codex-audit/toolcheck/syntax/xvhdl.log), [xvlog.log](D:/2610_MFCC/build/codex-audit/toolcheck/syntax/xvlog.log). **분석 성공만 확인했으며 elaboration, mixed-language binding, IP 연결, 수치 sim, 합성, 구현, 보드 동작을 실행하지 않았다.**
+둘 다 exit0. [명령 기록](<감사 폴더>/toolcheck/syntax/COMMANDS.txt), [xvhdl.log](<감사 폴더>/toolcheck/syntax/xvhdl.log), [xvlog.log](<감사 폴더>/toolcheck/syntax/xvlog.log). **분석 성공만 확인했으며 elaboration, mixed-language binding, IP 연결, 수치 sim, 합성, 구현, 보드 동작을 실행하지 않았다.**
 
-별도 `query_device.tcl`을 Vivado2020.2 batch로 실행한 결과(exit0), `get_parts -quiet xc7z020clg400-1`은 해당 part를 반환했고 `get_board_parts -quiet *zybo*z7*20*`는 비어 있었다. [device_query_2020_2.log](D:/2610_MFCC/build/codex-audit/toolcheck/device_query_2020_2.log). 이 결과를 2024.2 catalog 확인으로 사용하지 않는다.
+별도 `query_device.tcl`을 Vivado2020.2 batch로 실행한 결과(exit0), `get_parts -quiet xc7z020clg400-1`은 해당 part를 반환했고 `get_board_parts -quiet *zybo*z7*20*`는 비어 있었다. [device_query_2020_2.log](<감사 폴더>/toolcheck/device_query_2020_2.log). 이 결과를 2024.2 catalog 확인으로 사용하지 않는다.
 
 ### 2024.2 목표 버전 검사
 
-**이번 직접 검사:** 같은 authored HDL 15개를 별도 `syntax2024` 폴더에서 `C:\Xilinx\Vivado\2024.2\bin\xvhdl.bat`/`xvlog.bat`로 분석했다. 둘 다 exit0. [명령 기록](D:/2610_MFCC/build/codex-audit/toolcheck/syntax2024/COMMANDS.txt), [VHDL 로그](D:/2610_MFCC/build/codex-audit/toolcheck/syntax2024/xvhdl.log), [Verilog 로그](D:/2610_MFCC/build/codex-audit/toolcheck/syntax2024/xvlog.log). 2020.2 결과를 이름만 바꾼 것이 아니라 별도 실행 결과다.
+**이번 직접 검사:** 같은 authored HDL 15개를 별도 `syntax2024` 폴더에서 `C:\Xilinx\Vivado\2024.2\bin\xvhdl.bat`/`xvlog.bat`로 분석했다. 둘 다 exit0. [명령 기록](<감사 폴더>/toolcheck/syntax2024/COMMANDS.txt), [VHDL 로그](<감사 폴더>/toolcheck/syntax2024/xvhdl.log), [Verilog 로그](<감사 폴더>/toolcheck/syntax2024/xvlog.log). 2020.2 결과를 이름만 바꾼 것이 아니라 별도 실행 결과다.
 
-동일한 target/board 질의를 2024.2 batch로 실행했고 exit0이었다. `xc7z020clg400-1`은 반환되었고 `*zybo*z7*20*` board preset은 기본 catalog에서 미발견이었다. [2024.2 device query](D:/2610_MFCC/build/codex-audit/toolcheck/device_query_2024_2.log).
+동일한 target/board 질의를 2024.2 batch로 실행했고 exit0이었다. `xc7z020clg400-1`은 반환되었고 `*zybo*z7*20*` board preset은 기본 catalog에서 미발견이었다. [2024.2 device query](<감사 폴더>/toolcheck/device_query_2024_2.log).
 
 raw13에 필요한8개 + PCM 변환1개의 **XCI만 복사**해 `create_project -in_memory -part xc7z020clg400-1`, `read_ip`, `report_ip_status`를 수행했다. 최종 실행 exit0, 읽은 IP9개, 모두 `IS_LOCKED=1`이었다.
 
@@ -204,13 +206,13 @@ raw13에 필요한8개 + PCM 변환1개의 **XCI만 복사**해 `create_project 
 
 모든 original part는 `xc7k325tffg900-2`, 현재 in-memory target은 `xc7z020clg400-1`이다. `New License=Included`는 catalog 보고 값이며 IP 생성·합성 라이선스 실행 검증을 대신하지 않는다. FFT read 시 `[IP_Flow 19-6920]`으로 구버전 catalog definition/instance XML 및 port/interface 정보 부재 경고가 있었다. 최초 평면 복사에서 생긴 shared-output-directory 경고는 감사 폴더 배치 문제였으며, XCI별 하위 폴더로 재검사한 최종 보고서에서 제거되었다. read 오류는 없었고 복사 XCI9개의 hash가 원본과 동일함을 재확인했다.
 
-최종 근거: [Tcl 검사 스크립트](D:/2610_MFCC/build/codex-audit/toolcheck/ip2024/query_ip_status_isolated.tcl), [실행 로그](D:/2610_MFCC/build/codex-audit/toolcheck/ip2024/ip_status_isolated_query_2024_2.log), [IP status 보고서](D:/2610_MFCC/build/codex-audit/toolcheck/ip2024/ip_status_isolated_2024_2.txt).
+최종 근거: [Tcl 검사 스크립트](<감사 폴더>/toolcheck/ip2024/query_ip_status_isolated.tcl), [실행 로그](<감사 폴더>/toolcheck/ip2024/ip_status_isolated_query_2024_2.log), [IP status 보고서](<감사 폴더>/toolcheck/ip2024/ip_status_isolated_2024_2.txt).
 
 **구문 분석·XCI 상태 확인까지만 완료했다.** upgrade_ip, generate_target, mixed-language elaboration, 수치 simulation, synthesis/implementation, bitstream/보드 실행은 하지 않았다. 후속 작업에서는 업그레이드 전후 XCI/port/latency를 비교하고 전체 회귀 시험을 해야 한다.
 
 ## 9. 기존 FFT 재사용: 잠정 판정
 
-Claude 소유 파일의 정확한 경로는 `D:\2610_MFCC\project\docs\reviews\FFT_REUSE_REVIEW.md`이다. 현재 없으며 기다리지 않고 감사를 진행했다. 그 파일을 생성·수정하지 않는다.
+FFT 재사용 검토 파일의 경로는 `docs/reviews/FFT_REUSE_REVIEW.md`이다. 현재 없으며 기다리지 않고 감사를 진행했다. 그 파일을 생성·수정하지 않는다.
 
 | 항목 | 소스에서 확인 | 판정 |
 |---|---|---|

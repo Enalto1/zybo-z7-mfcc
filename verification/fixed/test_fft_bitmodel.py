@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Re-verify the reused FFT bit model inside this repository.
 
-docs/NEXT_TASK_CLAUDE_FIXED_POINT.md section 3 requires that a reused FFT bit
+docs/NEXT_TASK_FIXED_POINT.md section 3 requires that a reused FFT bit
 model carry its origin, hash, supported sizes and existing round/wrap
 behaviour.  PROVENANCE.json records those; this script checks that the copy in
 the repository still behaves as recorded, using only repository files:

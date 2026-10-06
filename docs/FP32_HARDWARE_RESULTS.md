@@ -1,6 +1,6 @@
 # 부동소수점 IP MFCC 하드웨어 구현·검증
 
-작성: 2026-10-04 KST. 단일 연속 검증 갱신: 2026-10-05 KST. 대상 `xc7z020clg400-1`, Vivado 2024.2 SW5239630. 사용자의 우선순위 변경에 따라 ARM 보드 실행을 보류하고 부동소수점 IP MFCC와 Verilog/SystemVerilog BRAM 버퍼를 작성했다. 기존 ARM 플랫폼/ELF, C·Python 기준값, Claude 담당 고정소수점 코드·FFT 검토와 원본은 수정하지 않는다.
+작성: 2026-10-04 KST. 단일 연속 검증 갱신: 2026-10-05 KST. 대상 `xc7z020clg400-1`, Vivado 2024.2 SW5239630. 사용자의 우선순위 변경에 따라 ARM 보드 실행을 보류하고 부동소수점 IP MFCC와 Verilog/SystemVerilog BRAM 버퍼를 작성했다. 기존 ARM 플랫폼/ELF, C·Python 기준값, 고정소수점 코드·FFT 검토 산출물과 원본은 수정하지 않는다.
 
 이 문서는 새 실행의 근거를 기록한다. 기존 C는 실제 음성 평가를 통과했으나 `fullscale_alternating`, `tone_bin32_1000hz`에서 정확도 목표에 미달한 상태다. 그 사실을 유지하며 하드웨어 검사의 자동 면제 사유로 쓰지 않는다. 최종 FP32 하드웨어도 모든 입력의 정확도 검사를 통과한 골든 모델이 아니다.
 

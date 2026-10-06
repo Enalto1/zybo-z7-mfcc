@@ -22,9 +22,9 @@
 | 출발점 | 아래 GitHub 프로젝트를 참고하고 필요한 부분을 이식 |
 | 개발 흐름 | Python 모델 → C 모델 → 하드웨어 구현과 검증 |
 | 계획한 비교군 | Python, ARM C, 부동소수점 IP 기반 HW, 고정소수점 custom RTL HW |
-| 기존 FFT | 이전에 Codex와 개발한 구현을 재사용 후보로 점검 |
+| 기존 FFT | 이전 과제에서 개발한 구현을 재사용 후보로 점검 |
 | 언어 | custom RTL은 Verilog를 목표로 검토. 기존 VHDL 모듈은 필요한 변경을 확인 |
-| 협업 | Codex와 Claude Code가 하나의 프로젝트와 공통 규격을 사용 |
+| 공통 규격 | 네 구현이 하나의 프로젝트와 공통 규격을 사용 |
 | Git | `project`만 저장소로 관리. 논문·발표 작업물은 제외 |
 
 ## 비교군의 역할
@@ -84,7 +84,7 @@ C float32 계산 코어와 PC 검증의 실측 상태·제한은 C_REFERENCE_RES
 
 초기 점검 결과인 [SOURCE_AUDIT.md](SOURCE_AUDIT.md)와 [MFCC_SPEC.md](MFCC_SPEC.md)가 생성되어 있다. 문서 존재는 MFCC 구현 통과를 의미하지 않는다. [NEXT_TASK_PYTHON.md](NEXT_TASK_PYTHON.md)의 Python 작업은 완료했다. C PC 검증 결과는 C_REFERENCE_RESULTS.md에 기록하고, 다음 ARM 실행의 플랫폼·컴파일러·입출력·측정 조건은 별도로 준비한다.
 
-Claude Code는 사용자가 보고한 현재 상태에서 기존 FFT를 검토 중이다. docs/reviews/FFT_REUSE_REVIEW.md와 D:/2610_MFCC/build/claude-review는 Claude 담당이며 다른 작업이 수정하지 않는다. Codex의 C 작업은 검토 완료를 기다리지 않고 진행한다. FFT 규격 확정과 RTL 수정은 검토 결과를 받은 뒤 진행한다.
+기존 FFT 재사용 검토가 진행 중이다. docs/reviews/FFT_REUSE_REVIEW.md와 그 로컬 검토 작업 폴더는 해당 검토의 산출물이며 다른 작업이 수정하지 않는다. C 작업은 검토 완료를 기다리지 않고 진행한다. FFT 규격 확정과 RTL 수정은 검토 결과를 받은 뒤 진행한다.
 
 공통 입력은 D:/2610_MFCC/data/librispeech/DATASET_MANIFEST.json이다. 개발용 1개와 별도 평가용 20개를 구분한다. 데이터 준비용 Python 환경과 MFCC 모델 실행 환경은 별개다.
 

@@ -16,12 +16,12 @@
 
 ## 역할과 수정 범위
 
-Codex는 Python 모델과 실행·검증 도구를 담당한다. Claude Code는 기존 FFT 재사용 검토를 수행 중이므로 기다리지 않고 독립적인 Python 작업을 진행한다.
+이 작업은 Python 모델과 실행·검증 도구를 담당한다. 기존 FFT 재사용 검토는 별도로 진행 중이므로 기다리지 않고 독립적인 Python 작업을 진행한다.
 
 - 작성 가능: software/python/, verification/python/, scripts/run_python_reference.py 및 필요한 전용 실행 스크립트, docs/PYTHON_REFERENCE_RESULTS.md.
 - 필요한 설정 명확화만 docs/MFCC_SPEC.md에 근거와 함께 반영한다. 입력·알고리즘을 결과에 맞추어 조용히 바꾸지 않는다.
 - 생성 결과와 로그: D:/2610_MFCC/build/python_reference/ 아래 실행별 폴더.
-- Claude 담당 docs/reviews/FFT_REUSE_REVIEW.md 및 build/claude-review는 수정하지 않는다. hardware/, 기존 FFT, reference_code 원본, 논문·발표 파일도 이번 범위에서 수정하지 않는다.
+- FFT 재사용 검토 산출물(docs/reviews/FFT_REUSE_REVIEW.md와 그 로컬 작업 폴더)은 수정하지 않는다. hardware/, 기존 FFT, reference_code 원본, 논문·발표 파일도 이번 범위에서 수정하지 않는다.
 - C/ARM, RTL, 비트정확 고정소수점 모델, Vivado IP 업그레이드는 후속 작업이다.
 - 현재 변경과 미추적 파일을 확인하고 보존한다. 이번 작업에서 Git 커밋·푸시·브랜치 전환은 하지 않는다.
 
@@ -65,6 +65,6 @@ docs/PYTHON_REFERENCE_RESULTS.md에는 실행 방법, 프로파일 차이, 테�
 - 같은 명령으로 결과와 manifest가 재생성되고, 입력 hash·프레임 수·유한값·수치 비교 결과가 남는다.
 - 두 프로파일의 차이와 독립성 한계가 설명되어 있다.
 - 대표 히트맵을 실제로 열어 축·색 범위·레이블을 확인했다.
-- 확인되지 않은 결과를 통과로 표시하지 않았고, Claude의 파일과 하드웨어 원본을 변경하지 않았다.
+- 확인되지 않은 결과를 통과로 표시하지 않았고, FFT 검토 산출물과 하드웨어 원본을 변경하지 않았다.
 
 모든 기준을 만족하지 못하면 부분 완료와 실패 원인을 보고한다. 계획만 제시하고 종료하지 말고 위 범위의 구현과 실행까지 진행한다.

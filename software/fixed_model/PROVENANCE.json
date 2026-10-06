@@ -1,14 +1,14 @@
 {
   "schema_version": 1,
-  "purpose": "Record the origin, hash and verified behaviour of every reused artefact in software/fixed_model, as required by docs/NEXT_TASK_CLAUDE_FIXED_POINT.md section 3.",
+  "purpose": "Record the origin, hash and verified behaviour of every reused artefact in software/fixed_model, as required by docs/NEXT_TASK_FIXED_POINT.md section 3.",
   "recorded": "2026-10-04 Asia/Seoul",
   "reused": [
     {
       "file": "fft_bitmodel.py",
       "sha256": "87bb1ea7d956ba8ea91b3e635d77c53739b387a313522809a38621cd25a0438a",
-      "copied_from": "D:/2610_MFCC/build/claude-review/fft_model.py",
+      "copied_from": "fft_model.py in the local FFT reuse review working folder (under build/, not distributed)",
       "copy_is_byte_identical": true,
-      "written_by": "Claude Code during the FFT reuse review (docs/reviews/FFT_REUSE_REVIEW.md section 2.2)",
+      "written_by": "This project, during the FFT reuse review (docs/reviews/FFT_REUSE_REVIEW.md section 2.2)",
       "derived_from": "Read-only analysis of D:/2610_MFCC/reference_code/previous_fft/rtl/** only. Not derived from the previous project's MATLAB model.",
       "supported_sizes": "cfg_log2_n 3..10, i.e. N = 8,16,32,64,128,256,512,1024. The MFCC path uses N=512 (log2 N = 9).",
       "fixed_configuration": "data signed 16 bit F15; twiddle signed 16 bit F15 from twiddle_1024_w16.mem; Type-I growth 1 bit (16->17); Type-II growth 1 bit (17->18); twiddle product 35 bit accumulated then >>15 to 18 bit; complete-group shift >>2 to 16 bit; trailing unpaired Type-I shift >>1 to 16 bit. Total reduction S = log2 N, so S = 9 at N = 512.",
@@ -18,7 +18,7 @@
       "verification_evidence": [
         "Twiddle ROM independently recomputed from cos/sin(-2*pi*a/1024) in Q1.15 with ties-to-even and coefficient saturation: all 1024 entries match.",
         "Bit-exact against the previous project's own Phase 6 expected vectors (5 cases, N=16 and N=1024): 0 mismatches.",
-        "Bit-exact against RTL simulation of fft_stream_top in 29 scenarios under Vivado 2020.2 and 2024.2: 22720 out_valid beats, 0 mismatches, byte-identical CSV across both tool versions. See D:/2610_MFCC/build/claude-review-2024_2/logs/RESULTS_2024_2.txt."
+        "Bit-exact against RTL simulation of fft_stream_top in 29 scenarios under Vivado 2020.2 and 2024.2: 22720 out_valid beats, 0 mismatches, byte-identical CSV across both tool versions. See logs/RESULTS_2024_2.txt in the 2024.2 review working folder."
       ],
       "not_verified": [
         "No board execution of the FFT exists. See docs/reviews/FFT_REUSE_REVIEW.md section 2.7.",

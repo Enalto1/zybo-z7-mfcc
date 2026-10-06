@@ -1,8 +1,10 @@
 # 기존 FFT 재사용 검토 (MFCC 통합 관점)
 
+> 이 문서가 인용하는 로그·스크립트는 저장소에 포함되지 않는 로컬 검토 작업 폴더에 있다. Vivado 버전별로 `<검토 폴더 2020.2>`, `<검토 폴더 2024.2>`로 표기한다.
+
 최초 작성: 2026년 10월 4일. 정정 2판(Vivado 2024.2 재검증).
 **정정 3판: 2026년 10월 4일** — 고정소수점 Q0/Q1 실험 결과를 반영해 C9~C11을 정정.
-작성자: Claude Code.
+작성 범위: 기존 FFT 재사용 검토.
 검토 대상: `D:\2610_MFCC\reference_code\previous_fft` (ZYBO Z7-20 R2^2SDF FFT).
 
 이 문서는 **직접 실행한 결과만**을 근거로 한다. 기존 보고서
@@ -11,9 +13,9 @@
 
 이번 작업에서 저장소 안에 작성·수정한 파일은 이 보고서와
 `FFT_SPEC_HANDOFF.md` 두 개다. `MFCC_SPEC.md`는 수정하지 않았다.
-`reference_code`, 구현 RTL, Codex의 Python/C 코드는 읽기만 했다.
-검증 자료는 `D:\2610_MFCC\build\claude-review`(Vivado 2020.2)와
-`D:\2610_MFCC\build\claude-review-2024_2`(Vivado 2024.2)에 분리 보관했다.
+`reference_code`, 구현 RTL, Python/C 코드는 읽기만 했다.
+검증 자료는 `<검토 폴더 2020.2>`(Vivado 2020.2)와
+`<검토 폴더 2024.2>`(Vivado 2024.2)에 분리 보관했다.
 Git 커밋·푸시·브랜치 전환은 하지 않았다.
 
 ---
@@ -97,14 +99,14 @@ Git 커밋·푸시·브랜치 전환은 하지 않았다.
 | **주 도구** | **Vivado 2024.2** (`C:\Xilinx\Vivado\2024.2`). 시뮬레이터 `Vivado Simulator v2024.2.0`, 구현 `Vivado v2024.2 (64-bit) SW Build 5239630` |
 | 대상 소자 | `xc7z020clg400-1` |
 | 참고 모델 | Python 3.11.9 + numpy 2.1.3 (RTL만 읽고 직접 작성한 비트정확 모델) |
-| 작업 폴더 | `D:\2610_MFCC\build\claude-review-2024_2` |
+| 작업 폴더 | `<검토 폴더 2024.2>` |
 
 ### 1.2 보존하는 Vivado 2020.2 증거
 
 `D:\Xilinx\Vivado\2020.2`가 함께 설치되어 있다. **기존 FFT 프로젝트**는 2020.2를 요구했고
 (그쪽 `docs/open_issues.md` OI-002, Phase 7 스크립트가 2020.2 외 버전을 거부),
 기존 테스트벤치의 통과 기록도 2020.2에서 나온 것이다. 따라서 1판의 모든 2020.2 결과는
-`D:\2610_MFCC\build\claude-review`에 **그 버전의 증거로 보존**하고 삭제·덮어쓰지 않았다.
+`<검토 폴더 2020.2>`에 **그 버전의 증거로 보존**하고 삭제·덮어쓰지 않았다.
 2024.2 결과는 별도 폴더에 두어 두 버전을 비교할 수 있게 했다.
 
 ### 1.3 확인하지 않은 환경
@@ -118,9 +120,9 @@ Git 커밋·푸시·브랜치 전환은 하지 않았다.
 
 ### 1.4 소스 무결성
 
-`claude-review-2024_2/src/rtl/**/*.sv` 20개 파일과 `mem/twiddle_1024_w16.mem`의 SHA-256이
+`<검토 폴더 2024.2>/src/rtl/**/*.sv` 20개 파일과 `mem/twiddle_1024_w16.mem`의 SHA-256이
 `reference_code/previous_fft` 원본과 **전부 일치**함을 확인했다(불일치 0).
-전체 해시는 `claude-review-2024_2/logs/source_hashes.txt`에 있다.
+전체 해시는 `<검토 폴더 2024.2>/logs/source_hashes.txt`에 있다.
 2024.2 자극(`scenarios.txt`, `expected_meta.json`, `s*_in.txt`)은 2020.2 실행과 **동일 해시**다.
 
 ---
@@ -137,8 +139,8 @@ Git 커밋·푸시·브랜치 전환은 하지 않았다.
 
 | 테스트 | 시나리오 | 결과 | 로그 |
 |---|---|---|---|
-| `tb_fft_stream` | 6개(N=16 1프레임, N=1024 4종, N=1024 3프레임 연속) | **PASS**, 출력 7,184/7,184, 불일치 0, overflow 0, 공백 0 | `claude-review/logs/phase6_rerun_xsim.log` |
-| `tb_fft_axi_stream_wrapper` | 2개(N=16 no-stall, 에러 상태 관찰) | **PASS**, 출력 16/16, protocol sticky=1, backpressure sticky=1 | `claude-review/logs/phase8_rerun_xsim.log` |
+| `tb_fft_stream` | 6개(N=16 1프레임, N=1024 4종, N=1024 3프레임 연속) | **PASS**, 출력 7,184/7,184, 불일치 0, overflow 0, 공백 0 | `<검토 폴더 2020.2>/logs/phase6_rerun_xsim.log` |
+| `tb_fft_axi_stream_wrapper` | 2개(N=16 no-stall, 에러 상태 관찰) | **PASS**, 출력 16/16, protocol sticky=1, backpressure sticky=1 | `<검토 폴더 2020.2>/logs/phase8_rerun_xsim.log` |
 
 첫 출력 지연은 N=16에서 42, N=1024에서 2,076 cycle로 기존 보고서와 같았다.
 
@@ -214,7 +216,7 @@ runner 종료 코드 0. checker 종료 코드 0(probe·probe2 각각).
 `PROBE` 라인의 지연·공백 수치도 모두 같다(N=512 지연 1048, 경계 공백 537, N=1024 1054 등).
 즉 **이 RTL은 두 시뮬레이터 버전에서 동일하게 동작한다.**
 
-- 실행 명령·종료 코드·수치: `claude-review-2024_2/logs/RESULTS_2024_2.txt`
+- 실행 명령·종료 코드·수치: `<검토 폴더 2024.2>/logs/RESULTS_2024_2.txt`
 - 로그: `logs/probe1_*.log`, `logs/probe2_*.log`, `logs/directed_*.log`, `logs/run_sim_2024_2_console.log`
 - 비교 결과: `logs/check_probe_2024_2.txt`, `logs/check_probe2_2024_2.txt`
 
@@ -248,7 +250,7 @@ runner 종료 코드 0. checker 종료 코드 0(probe·probe2 각각).
 | 샘플 1개의 `out_re`를 +1 | `FAIL id=20 bit_mismatch: 1 sample(s) differ` | 1 |
 | id=21 출력 512 beat 전부 삭제 + id=27을 96 beat 잘라냄 | `FAIL id=21 no_output`, `FAIL id=21 beat_count`, `FAIL id=27 beat_count` | 1 |
 
-로그: `claude-review/logs/check_probe_fixed_negative_controls.txt`.
+로그: `<검토 폴더 2020.2>/logs/check_probe_fixed_negative_controls.txt`.
 수정 전 스크립트(`check_probe.py`, `check_probe2.py`)와 그 로그는 증거 추적을 위해
 보존했고, 이후 모든 판정은 `check_probe_fixed.py`를 기준으로 한다.
 
@@ -293,8 +295,8 @@ MFCC의 power/Mel/log/DCT 단계를 추가할 여유가 있다(그 단계들의 
 (`INFO: [Synth 8-3876] $readmem data file 'twiddle_1024_w16.mem' is read successfully`).
 6.1 M7 참고.
 
-- 리포트: `claude-review-2024_2/work/synth_fft_stream_top_10.000/post_route_{timing,utilization,drc}.rpt`
-- 로그: `claude-review-2024_2/logs/ooc_fft_stream_top_100mhz.log`, `logs/ooc_console.log`
+- 리포트: `<검토 폴더 2024.2>/work/synth_fft_stream_top_10.000/post_route_{timing,utilization,drc}.rpt`
+- 로그: `<검토 폴더 2024.2>/logs/ooc_fft_stream_top_100mhz.log`, `logs/ooc_console.log`
 - 체크포인트: `.../post_route.dcp`
 
 ### 2.7 [실제 보드] 미실행
@@ -565,7 +567,7 @@ assign m_axis_tlast  = out_last;
 |---|---|---|
 | 클록 도메인 | `clk` 단일. CDC 없음 | 전체 RTL |
 | 리셋 | `rst_n`, active-low, **동기** | 전 모듈 `always_ff @(posedge clk) if (!rst_n)` |
-| 리셋 플립플롭 | 1,279 동기 reset + 13 동기 set (2020.2 기준 1,292) | `claude-review/logs/post_route_utilization.rpt` |
+| 리셋 플립플롭 | 1,279 동기 reset + 13 동기 set (2020.2 기준 1,292) | `<검토 폴더 2020.2>/logs/post_route_utilization.rpt` |
 | 리셋되지 않는 상태 | SDF delay line, 재정렬 bank, `twiddle_rom_sync`의 출력 레지스터 | `r22sdf_runtime_stage.sv`, `natural_reorder_pingpong.sv`, `twiddle_rom_sync.sv:24-26` |
 | 리셋 후 첫 프레임 | 정상. 단 `cfg_apply` 필요(4.1) | 지향 검사 D1·D4 |
 | 프레임 중간 리셋 | 복구 확인. 리셋 후 `cfg_ready`=1, `busy`=0, 에러 해제, 재설정 후 비트정확 | 지향 검사 D6 |
@@ -584,7 +586,7 @@ n=N-1에서 1이 아니면 `input_frame_error`가 서지만 **프레임은 그�
 ## 5. 수치 특성과 MFCC 영향 (조건 명시)
 
 2.2에서 비트정확이 확인된 모델로 스윕했다. 출력은
-`claude-review/logs/sweep_range.txt`, `sweep_range2.txt`, `sweep_headroom.txt`,
+`<검토 폴더 2020.2>/logs/sweep_range.txt`, `sweep_range2.txt`, `sweep_headroom.txt`,
 `sweep_clamp_check.txt`에 있다. 재현 자료 상태는 10.3 참고.
 
 ### 5.1 출력 양자화 잡음은 신호 크기에 거의 의존하지 않는다
@@ -615,7 +617,7 @@ N=64…1024, 입력 레벨 전 구간에서 **FFT 출력 오차**의 RMS는 **�
 
 Mel 에너지 로그 오차(아래 표)의 **추가 조건**: Mel 필터뱅크는 내가 작성한 float64
 26-band 삼각 필터(16 kHz, `fmin=0`, `fmax=8000`, bin edge는 `floor`, 정규화 없음)이며
-**Codex `MFCC_SPEC.md`의 필터뱅크 정의와 비트 단위로 맞춘 것이 아니다.**
+**`MFCC_SPEC.md`의 필터뱅크 정의와 비트 단위로 맞춘 것이 아니다.**
 로그 하한은 비율 계산 안정화를 위한 `1e-30`을 분자·분모에 더한 것이고,
 **공통 규격의 정규화 로그 하한 `1e-12`를 적용한 것이 아니다.** DCT·lifter·delta는 없다.
 
@@ -744,7 +746,7 @@ MFCC는 `in_im = 0`이므로 실용상 문제가 되지 않지만, 복소 묶기
 | M1-c | 예약 방식(순간 여유 확인만으로는 불충분) | 동시에 여러 프레임이 처리 중일 수 있으므로(4.4), `reserved = N × (수락됐지만 출력 버스트 미완료 프레임 수)`를 유지하고 **`DEPTH − occupancy − reserved ≥ N`**일 때만 새 프레임 첫 샘플을 수락한다. 순간 free space만 보면 두 프레임이 동시에 통과해 넘칠 수 있다. 예약은 해당 프레임의 마지막 beat가 FIFO에 들어간 시점에 해제한다. |
 | M1-d | 다음 프레임 유입 제한 | 위 조건이 거짓이면 **새 프레임을 시작하지 않는다**(입력단에서 막는다). 소비자가 오래 멈추면 프레임이 입력단에서 거절되는데, 이는 관측 가능하고 안전하다. FIFO가 조용히 넘치게 두면 안 된다. 깊이 N이면 프레임마다 직전 버스트가 완전히 빠진 뒤 다음 프레임을 시작하므로 매번 `ST_BETWEEN`→`ST_DRAIN` 비용(약 N+25 cycle, 4.3)이 붙는다. MFCC 예산에서는 무해하다. |
 | M1-e | 넘침 검출 | FIFO write-while-full을 별도 에러 플래그로 뽑고 프레임 상태에 포함한다. `bank_collision_error`는 이 상황을 **잡지 못한다**(4.5 (b) — 두 경로는 독립). |
-| M2 | **입력 스케일과 clamp** | `in = round(α·u·32768)`, `in_im = 0`. Codex 제안 `α = 1/2`(→ `|z| ≤ 0.975`)는 5.3의 두 신호군에서 overflow 0이었다. 양자화 결과를 **`[-32767, +32767]`로 clamp**해 `-32768` 코드를 배제한다. |
+| M2 | **입력 스케일과 clamp** | `in = round(α·u·32768)`, `in_im = 0`. 규격 초안의 `α = 1/2`(→ `|z| ≤ 0.975`)는 5.3의 두 신호군에서 overflow 0이었다. 양자화 결과를 **`[-32767, +32767]`로 clamp**해 `-32768` 코드를 배제한다. |
 | M3 | **출력 배율 환산** | `P[k] = N·(out_re² + out_im²) / (α² · 2^30)`. `α=1/2`, `N=512` → `P[k] = (out_re²+out_im²)/2^19`. 적용 조건은 `FFT_SPEC_HANDOFF.md` 3장. |
 | M4 | **설정 시퀀스** | 리셋 해제 후 idle에서 `cfg_log2_n=9` + 1 cycle `cfg_apply`를 반드시 1회 발행. |
 | M5 | **handshake 준수와 `in_last`** | `in_valid && in_ready`에서만 진행하므로 수락될 때까지 데이터·`in_last` 유지. `in_last`는 n=511에 정확히 1. `input_frame_error`를 프레임 상태로 수집. |
@@ -757,7 +759,7 @@ MFCC는 `in_im = 0`이므로 실용상 문제가 되지 않지만, 복소 묶기
 | # | 항목 | 내용 |
 |---|---|---|
 | R1 | bin 게이팅 | `out_index ≤ 256`만 power/Mel로 보내고 나머지는 버린다. 재정렬 불필요(3.2). |
-| R2 | 비트모델 공유 | `claude-review/fft_model.py`는 RTL과 비트정확이 확인되었다(두 Vivado 버전). `software/fixed_model/`의 FFT 단계 기준으로 쓰면 중복 검증이 줄어든다. |
+| R2 | 비트모델 공유 | `<검토 폴더 2020.2>/fft_model.py`는 RTL과 비트정확이 확인되었다(두 Vivado 버전). `software/fixed_model/`의 FFT 단계 기준으로 쓰면 중복 검증이 줄어든다. |
 | R3 | N=512 전용 벡터 승격 | 기존 벡터는 N=16/1024뿐이다. 이번 N=512 시나리오(impulse/DC/정수 bin/경계 공백/오버플로 경계)를 `verification/`의 공통 벡터로 올릴 것. |
 | R4 | 입력 공급기 | 프레임 내부 공백은 결과를 바꾸지 않으므로(4.2) 공급기 타이밍에 여유가 있다. 다만 **`in_ready` handshake는 반드시 구현**해야 하며 valid-only 공급은 안 된다. 경계 gapless를 억지로 맞출 필요는 없다(4.3). |
 | R5 | 다른 크기 시험 보강 | 런타임 크기 변경을 쓸 계획이면 N=256/128/64/1024의 시나리오를 늘릴 것(현재 크기당 1~2개, 2.3). |
@@ -801,12 +803,12 @@ MFCC는 `in_im = 0`이므로 실용상 문제가 되지 않지만, 복소 묶기
 
 ---
 
-## 8. Codex 초안과의 대조 (`docs/MFCC_SPEC.md`, 2026-10-04 판)
+## 8. 규격 초안과의 대조 (`docs/MFCC_SPEC.md`, 2026-10-04 판)
 
 이 대조는 **내가 MFCC_SPEC.md를 수정하지 않았다**는 전제에서의 제안이다.
 반영안 전체는 `FFT_SPEC_HANDOFF.md`에 있다.
 
-| Codex가 남긴 항목 | 이번 결과 |
+| 규격 초안이 남긴 항목 | 이번 결과 |
 |---|---|
 | "N=512의 비트정확·연속 프레임 시험과 누적 shift S는 별도 FFT 검토에서 확정"(`:121`) | **확정.** N=512 시나리오 24개 비트정확 일치, 연속 8프레임 공백 0, **S = log2 N = 9**. 2020.2·2024.2 결과 동일 |
 | "N512 shift/순서/overflow/단독 drain 검증 필요"(`:139`) | **완료.** shift=9, 자연 순서, overflow 플래그 모델 일치, 단독 프레임 drain 정상 |
@@ -842,7 +844,7 @@ MFCC는 `in_im = 0`이므로 실용상 문제가 되지 않지만, 복소 묶기
     구간 분석·형식 증명을 하지 않았다. peak 1.000과 0.975 사이 구간도 재현 자료가 없다.
 11. **실제 음성 기반 MFCC 전체 경로.** power/Mel/log/DCT를 구현하지 않았다.
     5.2의 Mel 수치는 합성 잡음 + 자작 float64 필터뱅크이며
-    **Codex 규격의 필터뱅크·로그 하한과 맞추지 않았다.** BFP 채택 근거로도 불충분하다.
+    **규격 문서의 필터뱅크·로그 하한과 맞추지 않았다.** BFP 채택 근거로도 불충분하다.
 12. **BFP의 실제 음성 효과와 delta/CMVN 영향.** 미시험(`FFT_SPEC_HANDOFF.md` 7장 제안).
 13. **다른 시뮬레이터 교차 검증.** XSIM만 사용(2020.2 + 2024.2).
 14. **전력 측정.** 전혀 하지 않았다.
@@ -891,7 +893,7 @@ MFCC는 `in_im = 0`이므로 실용상 문제가 되지 않지만, 복소 묶기
 
 ### 10.2 산출물
 
-**Vivado 2024.2: `D:\2610_MFCC\build\claude-review-2024_2`**
+**Vivado 2024.2: `<검토 폴더 2024.2>`**
 
 | 경로 | 내용 |
 |---|---|
@@ -905,7 +907,7 @@ MFCC는 `in_im = 0`이므로 실용상 문제가 되지 않지만, 복소 묶기
 | `work/probe/`, `work/probe2/`, `work/directed/` | 자극·출력 CSV |
 | `run_sim_2024_2.ps1`, `run_ooc_impl.tcl`, `check_probe_fixed.py`, `fft_model.py` | 실행 스크립트 |
 
-**Vivado 2020.2 (보존): `D:\2610_MFCC\build\claude-review`**
+**Vivado 2020.2 (보존): `<검토 폴더 2020.2>`**
 
 | 경로 | 내용 |
 |---|---|
@@ -944,21 +946,21 @@ MFCC는 `in_im = 0`이므로 실용상 문제가 되지 않지만, 복소 묶기
 
 ```bash
 # --- Vivado 2024.2 (이 프로젝트의 기준 버전) ---
-powershell -File D:\2610_MFCC\build\claude-review-2024_2\run_sim_2024_2.ps1
-cd D:\2610_MFCC\build\claude-review-2024_2
+powershell -File <검토 폴더 2024.2>\run_sim_2024_2.ps1
+cd <검토 폴더 2024.2>
 python check_probe_fixed.py work\probe  "2024.2 probe"
 python check_probe_fixed.py work\probe2 "2024.2 probe2"
 "C:\Xilinx\Vivado\2024.2\bin\vivado.bat" -mode batch -nojournal ^
-  -log    D:\2610_MFCC\build\claude-review-2024_2\logs\ooc_fft_stream_top_100mhz.log ^
-  -source D:\2610_MFCC\build\claude-review-2024_2\run_ooc_impl.tcl ^
+  -log    <검토 폴더 2024.2>\logs\ooc_fft_stream_top_100mhz.log ^
+  -source <검토 폴더 2024.2>\run_ooc_impl.tcl ^
   -tclargs fft_stream_top 10.000
 
 # --- Vivado 2020.2 (보존된 증거의 재현) ---
-powershell -File D:\2610_MFCC\build\claude-review\run_phase6_rerun.ps1
-powershell -File D:\2610_MFCC\build\claude-review\run_phase8_rerun.ps1
+powershell -File <검토 폴더 2020.2>\run_phase6_rerun.ps1
+powershell -File <검토 폴더 2020.2>\run_phase8_rerun.ps1
 
 # --- 도구 버전과 무관한 Python 분석 ---
-cd D:\2610_MFCC\build\claude-review
+cd <검토 폴더 2020.2>
 python validate_model.py
 python sweep_range.py
 python sweep_range2.py

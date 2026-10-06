@@ -53,9 +53,7 @@ Vivado IP 설정, 제약, 계수 및 메모리 초기화 파일은 개발 소스
 - [RTL 코딩 규약](docs/RTL_CODING_RULES.md): 신규 RTL 작성 시 필수 적용.
 - [양자화·고정소수점 개발 절차](docs/FIXED_POINT_DEVELOPMENT.md): float32 C와 정수 비트모델의 역할 및 검증 단계.
 - [고정소수점 설계 변경 이력](docs/FIXED_POINT_DESIGN_HISTORY.md): FFT 폭·배율 변경의 이유와 수치 근거, 남은 오차, 별도 fixed C 계획. 이후 양자화 변경도 이 문서에 기록.
-- [Claude 다음 작업](docs/NEXT_TASK_CLAUDE_FIXED_POINT.md): 양자화 계약과 부분 정수 경로 실험.
-- 도구별 시작 지침은 [AGENTS.md](AGENTS.md), [CLAUDE.md](CLAUDE.md)를 따릅니다.
 
-## 협업과 검증
+## 기록과 검증
 
-Codex와 Claude Code는 같은 규격을 사용하고 동시에 수정할 파일 범위를 나눕니다. 테스트 실행 여부, 비교 입력, 측정 범위와 코드 버전을 기록합니다. 논문과 발표에는 실제 확인한 결과만 사용합니다.
+네 구현은 모두 같은 MFCC 규격을 사용하고, 비교 실험은 같은 입력으로 수행합니다. 실행마다 테스트 수행 여부, 비교 입력, 측정 구간과 코드 버전을 기록합니다. 논문과 발표에는 실제로 확인한 결과만 사용합니다.

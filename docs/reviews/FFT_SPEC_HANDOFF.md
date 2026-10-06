@@ -1,7 +1,9 @@
-# FFT 규격 반영안 (Codex 인계)
+# FFT 규격 반영안 (인계용)
+
+> 이 문서가 인용하는 로그는 저장소에 포함되지 않는 로컬 검토 작업 폴더에 있다. Vivado 버전별로 `<검토 폴더 2020.2>`, `<검토 폴더 2024.2>`로 표기한다.
 
 작성: 2026년 10월 4일. **3판: 고정소수점 Q0/Q1 실험 결과를 반영한 정정판.**
-작성자: Claude Code.
+작성 범위: 기존 FFT 재사용 검토.
 대상 문서: `docs/MFCC_SPEC.md` (2026-10-04 판).
 상세 검증 근거: [FFT_REUSE_REVIEW.md](FFT_REUSE_REVIEW.md),
 [FIXED_POINT_QUANTIZATION_PLAN.md](FIXED_POINT_QUANTIZATION_PLAN.md),
@@ -13,7 +15,7 @@ C15(Mel 계수 양자화 오차 측정), B5(누산 tight bound 52비트).
 
 ## 0. 이 문서의 성격
 
-`MFCC_SPEC.md`는 **수정하지 않았다.** 이 문서는 반영안이고, 반영 판단은 Codex가 한다.
+`MFCC_SPEC.md`는 **수정하지 않았다.** 이 문서는 반영안이고, 반영 여부는 규격 담당 작업에서 판단한다.
 
 `MFCC_SPEC.md:145`의 "검토가 들어오면 위 FFT 계약과 충돌을 확인한 뒤 규격을 갱신한다"에
 대한 답이다. **충돌은 없다.** `:121`, `:139`가 FFT 검토로 넘긴 미확정 항목을 채우고,
@@ -24,7 +26,7 @@ C15(Mel 계수 양자화 오차 측정), B5(누산 tight bound 52비트).
 - **FFT 단독** 검증 결과다. power/Mel/log/DCT는 구현하지 않았다.
 - **실제 보드 검증은 없다.** 비트스트림·JTAG·UART·DMA 어느 것도 실행하지 않았다.
 - **실제 음성으로 MFCC 정확도를 측정하지 않았다.** 5장의 Mel 관련 수치는 합성
-  가우시안 잡음과 내가 작성한 float64 필터뱅크에서 나온 것이며, Codex 규격의
+  가우시안 잡음과 이 검토에서 작성한 float64 필터뱅크에서 나온 것이며, 규격 문서의
   필터뱅크·로그 하한과 비트 단위로 맞추지 않았다.
 - 검증 도구는 **Vivado 2024.2**(주)와 **2020.2**(보존된 기존 증거)다.
 
@@ -46,10 +48,10 @@ C15(Mel 계수 양자화 오차 측정), B5(누산 tight bound 52비트).
 
 | # | 현재 `MFCC_SPEC.md` | 제안 문구 | 근거 | 상태 |
 |---|---|---|---|---|
-| A1 | `:121` "이번 선택인 N=512의 비트정확·연속 프레임 시험과 누적 shift S는 별도 FFT 검토에서 확정해야 한다" | "N=512에서 기존 `fft_stream_top`의 **누적 shift S = log2 N = 9**이고, 출력은 **자연 순서 bin 0…511**이다. 독립 비트정확 모델과 24개 N=512 시나리오에서 불일치 0이며 Vivado 2024.2와 2020.2의 출력이 바이트 단위로 동일하다." | `claude-review-2024_2/logs/RESULTS_2024_2.txt`, `logs/check_probe_2024_2.txt`, `logs/check_probe2_2024_2.txt` | **확정** |
+| A1 | `:121` "이번 선택인 N=512의 비트정확·연속 프레임 시험과 누적 shift S는 별도 FFT 검토에서 확정해야 한다" | "N=512에서 기존 `fft_stream_top`의 **누적 shift S = log2 N = 9**이고, 출력은 **자연 순서 bin 0…511**이다. 독립 비트정확 모델과 24개 N=512 시나리오에서 불일치 0이며 Vivado 2024.2와 2020.2의 출력이 바이트 단위로 동일하다." | `<검토 폴더 2024.2>/logs/RESULTS_2024_2.txt`, `logs/check_probe_2024_2.txt`, `logs/check_probe2_2024_2.txt` | **확정** |
 | A2 | `:139` "FFT 입출력 … N512 shift/순서/overflow/단독 drain 검증 필요" | "검증 완료. shift=9, 자연 순서, overflow 플래그가 비트모델과 일치, 단독(1프레임) drain 정상." | 위와 동일. 단독 프레임은 id 1–6, 11, 12, 14, 16, 17, 24–26, 28–31 | **확정** |
 | A3 | `:40` FFT 행 (float IP 기준) | "고정소수점 비교군의 FFT는 `fft_stream_top`이며 **float32 `fft_block`(xfft)의 대체가 아니다.** 부동소수점 IP 비교군은 xfft를 따로 생성·검증한다." | `github_mfcc/.../power_spectrum.v:79` | **확정** |
-| A4 | `:128` `F ≈ FFT(u)/(2*2^S)`, `P = 2048*(Re(F)²+Im(F)²)` | **그대로 유지.** 수식이 맞다. S=9 확인으로 계수 2048이 확정된다. 정수 형태 `P = (out_re²+out_im²)/2^19`가 수치적으로 **동일**함을 확인했다. | `claude-review/logs/power_mel_widths.txt` ("identical : True") | **확정** |
+| A4 | `:128` `F ≈ FFT(u)/(2*2^S)`, `P = 2048*(Re(F)²+Im(F)²)` | **그대로 유지.** 수식이 맞다. S=9 확인으로 계수 2048이 확정된다. 정수 형태 `P = (out_re²+out_im²)/2^19`가 수치적으로 **동일**함을 확인했다. | `<검토 폴더 2020.2>/logs/power_mel_widths.txt` ("identical : True") | **확정** |
 | A5 | `:143` overflow 정책 "wrap+sticky를 비트모델에 그대로 반영" | **유지.** 추가: "`out_overflow`는 **프레임 단위** 플래그이며 해당 프레임의 모든 출력 beat에서 1로 재생된다. 프레임 간에 누적되지 않으므로 프레임별로 수집한다." | `fft_r22sdf_core.sv:155`, `natural_reorder_pingpong.sv`(`bank_frame_overflow`), 3.6 of 리뷰 | **확정** |
 | A6 | `:156` "기존 FFT에는 output-ready가 없으므로 …" | "기존 FFT에는 output-ready가 없고, **`fft_r22sdf_core`에는 하류 정지 입력 포트 자체가 없다.** 재정렬 버퍼의 읽기측도 멈출 수 없다. 따라서 코어를 세우는 방식은 다단 RTL 수정이며, 지금은 **출력 FIFO + 프레임 수락 제한**만이 설계 추가 없이 가능한 대응이다." | `fft_r22sdf_core.sv` 포트 목록, `natural_reorder_pingpong.sv:178-205`, `fft_stream_top.sv:64,122` | **확정** |
 | A7 | `:156` "DMA S2MM을 먼저 시작하는 것만으로 임의 backpressure 지원이 증명되지 않는다" | "판정 기준은 **정지 중 데이터·`tvalid`·`tlast`를 수락 시점까지 유지하는가**이다. `fft_axi_stream_wrapper`는 hold/skid 레지스터가 없어 **유지하지 않는다**: beat 데이터 소실, handshake 없는 `tvalid` 하강(AXI 규약 위반), `tlast` 소실로 프레임 경계 유실." | `fft_axi_stream_wrapper.sv:83-86,158-159` | **확정** |
@@ -60,7 +62,7 @@ C15(Mel 계수 양자화 오차 측정), B5(누산 tight bound 52비트).
 
 | # | 현재 `MFCC_SPEC.md` | 제안 문구 | 근거 | 상태 |
 |---|---|---|---|---|
-| B1 | `:123` "`z=u/2`를 Q1.15로 반올림해 입력 … \|z\|≤0.975" | **유지하고 조건과 clamp를 추가:** "입력 Q1.15 정수를 **`[-32767, +32767]`로 clamp**해 `-32768` 코드를 배제한다. peak 0.975는 두 합성 적대 신호군(전 k full-scale 사각파 1,792 프레임, 무작위 ±A 부호 패턴 1,500 프레임, N=256/512/1024)에서 overflow 0이었다. **실제 음성과 pre-emphasis 경로는 이 재현 자료에 포함되지 않는다.**" | `claude-review/logs/sweep_clamp_check.txt` (seed 20261004, 13,168 프레임), `sweep_clamp_check.py` | **조건부** |
+| B1 | `:123` "`z=u/2`를 Q1.15로 반올림해 입력 … \|z\|≤0.975" | **유지하고 조건과 clamp를 추가:** "입력 Q1.15 정수를 **`[-32767, +32767]`로 clamp**해 `-32768` 코드를 배제한다. peak 0.975는 두 합성 적대 신호군(전 k full-scale 사각파 1,792 프레임, 무작위 ±A 부호 패턴 1,500 프레임, N=256/512/1024)에서 overflow 0이었다. **실제 음성과 pre-emphasis 경로는 이 재현 자료에 포함되지 않는다.**" | `<검토 폴더 2020.2>/logs/sweep_clamp_check.txt` (seed 20261004, 13,168 프레임), `sweep_clamp_check.py` | **조건부** |
 | B2 | `:123` "모든 fixed stage의 overflow를 기록하고 무시하지 않는다" | **유지하고 이유를 수치로:** "wrap이므로 피해가 크다. 실측 — 실수 full-scale 오버플로 프레임 NMSE −15.1 dB / 최대 오차 513 LSB, 복소 full-scale −2.5 dB / 4,841 LSB. 같은 프레임에 1비트 여유를 주면 −61.8 dB / 1.2 LSB." | 리뷰 3.6 (시나리오 id 24/25/29) | **조건부** (실측값은 그 세 프레임) |
 | B3 | `:138` pre-emphasis·윈도 행 "FFT 전 /2" | **유지.** 추가: "`-32768` 배제 clamp 위치를 FFT 입력 직전으로 명시한다. 입력 폭·소수부·반올림 위치는 여전히 미확정이다." | B1 | **조건부** |
 | B4 | `:92` "epsilon은 **정규화된 P와 E의 단위**이다. FFT의 축소된 정수값에 같은 숫자를 그대로 적용하지 않는다" | **유지하고 보강:** 5.2~5.3 참고. floor는 **BFP 지수까지 반영한 `E_m = T_m * 2^-(19+2s+Fw)`**에서 비교하며, **양수 정수 `T_m`도 floor 아래일 수 있다**(s=10에서 경계 `T=36029`). 저에너지 구간에서 fixed와 float은 floor 선택만으로 일치시킬 수 없다. **[3판 정정 C13]** 1·2판이 쓴 "band 에너지 바닥 1.7e-6~1.3e-5"는 FFT 출력 RMS에서 유도한 특정 조건의 오차 전력이며, 모든 신호의 실제 Mel 에너지 하한이 아니다 | `verification/fixed/test_power_mel.py`, `FIXED_POINT_PILOT.md` 4장 | **확정**(floor 위치) / **조건부**(저에너지 거동의 크기) |
@@ -226,12 +228,12 @@ BFP 경로에서 쓰면 안 된다. 검증: `verification/fixed/test_power_mel.p
 측정 사실만 적으면 다음과 같다.
 
 - 합성 Hamming 잡음에서 FFT 출력 오차는 bin당 복소 RMS **약 0.59 LSB(Q1.15)**였다
-  (`claude-review/logs/sweep_range.txt`).
+  (`<검토 폴더 2020.2>/logs/sweep_range.txt`).
 - α=1/2 환산에서 그 오차 전력은 `0.59²/2^19 ≈ 6.6e-7`에 해당한다. 이는 **그 신호의 그
   조건에서의 수치**다.
 - 같은 합성 신호에서 α=1/2일 때 `P`가 0이 되는 bin 수는 입력 peak 1.0/0.25에서 0,
   0.0625에서 1, 0.01에서 58, 0.003에서 243개였다
-  (`claude-review/logs/power_mel_widths.txt`).
+  (`<검토 폴더 2020.2>/logs/power_mel_widths.txt`).
 
 실제 개발 음성에서의 거동은 추정이 아니라 측정으로 확인했다
 ([FIXED_POINT_PILOT.md](FIXED_POINT_PILOT.md) 4장): 고정 α=1/2에서 Mel 정수 0이
@@ -242,7 +244,7 @@ BFP 경로에서 쓰면 안 된다. 검증: `verification/fixed/test_power_mel.p
 `E_m`이 floor 아래로 떨어진 셀에서 float 기준의 참 값은 `1e-12` 근처가 아니라
 그보다 훨씬 큰 값일 수 있고, `ln(1e-12)`를 대입하면 셀당 8~13 nats의 오차가 생긴다.
 
-제안(**Codex 결정 사항**):
+제안(**규격 담당 결정 사항**):
 
 1. **프레임·band 단위 유효성 플래그.** `E_m`이 floor 아래로 떨어진 band가 있으면 그
    프레임을 `quantization_floor_hit`으로 표시하고, 전체 통계와 **함께** 층화 집계한다.
@@ -373,13 +375,13 @@ MFCC 예산(hop 160 @ 16 kHz = 10 ms = 1,000,000 cycle @ 100 MHz)에서 537 cycl
 
 | # | 결정 항목 | 필요한 실험 | 결정권 |
 |---|---|---|---|
-| 1 | power/Mel 폭 확정(psum 32 / w Q0.16 / 누산 56 / E 소수 35) | 비트모델로 Python float64 대비 오차 측정 + RTL 자원 확인 | Codex |
-| 2 | near-silence 처리 방침(5.3의 1·2·3 중 택일/병용) | 개발 음성으로 프레임 레벨 분포와 `E_int==0` 발생률 측정 | Codex |
-| 3 | 저에너지 프레임의 **층화 보고 형식**(전체 통계는 유지) | `FIXED_POINT_PILOT.md` 4장 형식 검토 | Codex |
-| 4 | BFP 채택 여부 | 실험 E1~E4(8장) | Codex |
-| 5 | 출력 FIFO 깊이와 credit 방식, AXI-Lite/DMA 중 어느 경로 먼저 | **protocol 설계 + 시뮬레이션**(깊이를 수치로 확정하기 전에 필요) | 사용자/Codex |
+| 1 | power/Mel 폭 확정(psum 32 / w Q0.16 / 누산 56 / E 소수 35) | 비트모델로 Python float64 대비 오차 측정 + RTL 자원 확인 | 규격 담당 |
+| 2 | near-silence 처리 방침(5.3의 1·2·3 중 택일/병용) | 개발 음성으로 프레임 레벨 분포와 `E_int==0` 발생률 측정 | 규격 담당 |
+| 3 | 저에너지 프레임의 **층화 보고 형식**(전체 통계는 유지) | `FIXED_POINT_PILOT.md` 4장 형식 검토 | 규격 담당 |
+| 4 | BFP 채택 여부 | 실험 E1~E4(8장) | 규격 담당 |
+| 5 | 출력 FIFO 깊이와 credit 방식, AXI-Lite/DMA 중 어느 경로 먼저 | **protocol 설계 + 시뮬레이션**(깊이를 수치로 확정하기 전에 필요) | 사용자/규격 담당 |
 | 6 | PS7 포함 100 MHz 타이밍 | board preset 확보 후 블록 디자인 구현 | — |
-| 7 | pre-emphasis·윈도 중간 폭·소수부·반올림 위치 | 범위·오차 분석 | Codex |
+| 7 | pre-emphasis·윈도 중간 폭·소수부·반올림 위치 | 범위·오차 분석 | 규격 담당 |
 
 ---
 
@@ -394,7 +396,7 @@ MFCC 예산(hop 160 @ 16 kHz = 10 ms = 1,000,000 cycle @ 100 MHz)에서 537 cycl
 | 입력 | `numpy` seed 99 가우시안 잡음 1개를 peak 1로 정규화 → Hamming 윈도 → 목표 peak로 스케일. **실제 음성 아님. pre-emphasis 없음** |
 | shift 정책 | `pk << (s+1) <= 16383`을 만족하는 최대 `s` (상향 후 peak < 0.5, 1비트 여유) |
 | 기준값 | **같은 양자화 입력**의 float64 `numpy.fft` (입력 양자화 오차 제외) |
-| Mel | 내가 작성한 float64 26-band 삼각 필터(16 kHz, fmin 0, fmax 8000, bin edge `floor`, 정규화 없음). **Codex 규격과 비트 단위로 맞추지 않음** |
+| Mel | 이 검토에서 작성한 float64 26-band 삼각 필터(16 kHz, fmin 0, fmax 8000, bin edge `floor`, 정규화 없음). **규격 문서와 비트 단위로 맞추지 않음** |
 | 로그 하한 | 비율 안정화용 `1e-30`을 분자·분모에 가산. **규격의 `1e-12` 미적용** |
 | 후단 | DCT·lifter·delta **없음** |
 | 결과 | 입력 peak 1.0~0.0003에서 최대 \|Δlog\| 0.011~0.058 dB. seed 5의 400 프레임에서 최악 band 0.046~0.181 dB, overflow 0 |
@@ -406,7 +408,7 @@ MFCC 예산(hop 160 @ 16 kHz = 10 ms = 1,000,000 cycle @ 100 MHz)에서 537 cycl
 ### 8.2 채택 판단용 후속 실험 (개발 음성 기반)
 
 전제: `MFCC_SPEC.md:153`의 중간 단계 저장(`P[257]`, `E[26]`, `lnE[26]`, `C[13]`)과
-Codex의 Python 기준 경로가 먼저 있어야 한다.
+Python 기준 경로가 먼저 있어야 한다.
 
 | # | 실험 | 입력 | 측정 | 판단 기준(제안) |
 |---|---|---|---|---|
@@ -431,19 +433,19 @@ Codex의 Python 기준 경로가 먼저 있어야 한다.
 
 | 주장 | 로그 / 스크립트 | 상태 |
 |---|---|---|
-| 29개 시나리오 비트정확, 플래그 0 (2024.2) | `claude-review-2024_2/logs/check_probe_2024_2.txt`, `check_probe2_2024_2.txt` (종료 코드 0) | 재현 가능 |
-| 2024.2 시뮬레이션 종료 코드 전부 0 | `claude-review-2024_2/logs/run_sim_2024_2_console.log`, `RESULTS_2024_2.txt` | 재현 가능 |
+| 29개 시나리오 비트정확, 플래그 0 (2024.2) | `<검토 폴더 2024.2>/logs/check_probe_2024_2.txt`, `check_probe2_2024_2.txt` (종료 코드 0) | 재현 가능 |
+| 2024.2 시뮬레이션 종료 코드 전부 0 | `<검토 폴더 2024.2>/logs/run_sim_2024_2_console.log`, `RESULTS_2024_2.txt` | 재현 가능 |
 | 2020.2 ↔ 2024.2 출력 바이트 동일 | `RESULTS_2024_2.txt` (SHA-256 비교) | 재현 가능 |
-| 지향 검사 28/28 | `claude-review-2024_2/logs/directed_xsim.log` | 재현 가능 |
-| 100 MHz OOC post-route (2024.2 WNS +0.106 ns, LUT 5138 / FF 1304 / BRAM 3 / DSP 20) | `claude-review-2024_2/work/synth_fft_stream_top_10.000/post_route_*.rpt`, `logs/ooc_*.log` | 재현 가능 |
-| 소스·ROM 해시 원본 일치 | `claude-review-2024_2/logs/source_hashes.txt` | 재현 가능 |
-| checker 검출력(음성 대조) | `claude-review/logs/check_probe_fixed_negative_controls.txt` (종료 코드 1) | 재현 가능 |
-| ROM 1,024 entry 독립 재계산 일치 | `claude-review/logs/` + `validate_model.py` | 재현 가능 |
-| 오버플로: full scale 발생 / peak 0.975 0건 / `-32767` clamp가 제거 | `claude-review/logs/sweep_clamp_check.txt`, `sweep_clamp_check.py` (seed 20261004, 13,168 프레임) | 재현 가능 |
-| 출력 잡음 바닥 ~0.6 LSB, 레벨별 NMSE | `claude-review/logs/sweep_range.txt`, `sweep_range.py` | 재현 가능 |
-| Mel 로그 오차(합성 신호), BFP 효과 | `claude-review/logs/sweep_headroom.txt`, `sweep_headroom.py` | 재현 가능 |
-| power/Mel 폭, `1e-12` 위치, 0인 bin 수 | `claude-review/logs/power_mel_widths.txt` | **재현 자료 부족** — 저장되지 않은 인라인 명령으로 생성. 같은 내용은 `verification/fixed/test_power_mel.py`와 `test_coeffs.py`로 대체 검증했다(스크립트 보존됨) |
-| peak 0.70~0.99 전 구간, pre-emphasis+Hamming 1,000프레임, 복소 한계 | `claude-review/logs/sweep_headroom_band.txt` | **재현 자료 부족 — 근거로 쓰지 말 것** |
+| 지향 검사 28/28 | `<검토 폴더 2024.2>/logs/directed_xsim.log` | 재현 가능 |
+| 100 MHz OOC post-route (2024.2 WNS +0.106 ns, LUT 5138 / FF 1304 / BRAM 3 / DSP 20) | `<검토 폴더 2024.2>/work/synth_fft_stream_top_10.000/post_route_*.rpt`, `logs/ooc_*.log` | 재현 가능 |
+| 소스·ROM 해시 원본 일치 | `<검토 폴더 2024.2>/logs/source_hashes.txt` | 재현 가능 |
+| checker 검출력(음성 대조) | `<검토 폴더 2020.2>/logs/check_probe_fixed_negative_controls.txt` (종료 코드 1) | 재현 가능 |
+| ROM 1,024 entry 독립 재계산 일치 | `<검토 폴더 2020.2>/logs/` + `validate_model.py` | 재현 가능 |
+| 오버플로: full scale 발생 / peak 0.975 0건 / `-32767` clamp가 제거 | `<검토 폴더 2020.2>/logs/sweep_clamp_check.txt`, `sweep_clamp_check.py` (seed 20261004, 13,168 프레임) | 재현 가능 |
+| 출력 잡음 바닥 ~0.6 LSB, 레벨별 NMSE | `<검토 폴더 2020.2>/logs/sweep_range.txt`, `sweep_range.py` | 재현 가능 |
+| Mel 로그 오차(합성 신호), BFP 효과 | `<검토 폴더 2020.2>/logs/sweep_headroom.txt`, `sweep_headroom.py` | 재현 가능 |
+| power/Mel 폭, `1e-12` 위치, 0인 bin 수 | `<검토 폴더 2020.2>/logs/power_mel_widths.txt` | **재현 자료 부족** — 저장되지 않은 인라인 명령으로 생성. 같은 내용은 `verification/fixed/test_power_mel.py`와 `test_coeffs.py`로 대체 검증했다(스크립트 보존됨) |
+| peak 0.70~0.99 전 구간, pre-emphasis+Hamming 1,000프레임, 복소 한계 | `<검토 폴더 2020.2>/logs/sweep_headroom_band.txt` | **재현 자료 부족 — 근거로 쓰지 말 것** |
 
 마지막 행에 주의. 해당 로그는 저장되지 않은 인라인 명령으로 생성되어 스크립트가 없다.
 결정적 결론 세 개만 `sweep_clamp_check.py`로 축소 재현했다

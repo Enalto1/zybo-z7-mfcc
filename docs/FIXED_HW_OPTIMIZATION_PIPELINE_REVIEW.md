@@ -309,5 +309,5 @@ address timing in this review.
 - `scripts/run_fixed_full_rtl.py`, `fixed_full_pipeline.tcl`, and
   `verify_fixed_integer_rtl.py`
 - `build/system_dma/i10/reports/timing_route.rpt` (preserved baseline)
-- `build/claude-audit-20261004/revision_03/CORRECTIONS_R3.md` and
+- `<감사 폴더 20261004>/revision_03/CORRECTIONS_R3.md` and
   `FINAL_CORRECTIONS.md` (preserved correction record)

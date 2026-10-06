@@ -154,4 +154,4 @@ Windows 장치 조회에서 일반 COM1 및 Bluetooth COM3/4/5/6만 확인됐다
 
 `platform_01/02`는 Tcl 명령/인터페이스 이름 검사 오류, `bsp_probe_01`은 BSP target flags 누락, `apps_01`은 enum 경고의 오류 승격, `apps_02/03`은 startup specs 연결/경로 문제였다. `apps_03`에서는 IDE lock 파일의 hash 시도도 실패해 후속 index에서 transient IDE metadata를 명시적으로 제외했다. `prepare_01`은 무관한 local symbol의 동명 출력을 export 충돌로 읽은 parser 오류였다. 새 폴더에서 수정·빌드했으며 기존 로그를 덮어쓰지 않았다. 이 실패들은 보드 수치 오류가 아니다.
 
-남은 순서는 실물 revision·연결 확인 → PS 초기화와 Hello UART → 예약 DDR 검사 → 합성17/개발1 ARM 수치 비교 → 개발 측정·조건 동결 → 평가20과 측정이다. 합성 2개 기존 C 실패와 새 ARM 실패를 계속 구분한다. Claude의 FFT 검토 문서·검증 폴더 및 기존 FFT/RTL 원본은 수정하지 않았다.
+남은 순서는 실물 revision·연결 확인 → PS 초기화와 Hello UART → 예약 DDR 검사 → 합성17/개발1 ARM 수치 비교 → 개발 측정·조건 동결 → 평가20과 측정이다. 합성 2개 기존 C 실패와 새 ARM 실패를 계속 구분한다. FFT 검토 문서·검증 폴더 및 기존 FFT/RTL 원본은 수정하지 않았다.

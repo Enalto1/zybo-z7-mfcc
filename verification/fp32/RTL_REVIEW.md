@@ -1,6 +1,6 @@
 # FP32 CE RTL 독립 검토
 
-검토일: 2026-10-04 KST. 범위는 `hardware/fp32/rtl/`의 현재 사용자 작성 SystemVerilog 여섯 파일과 compact Mel 계수 export 변경이다. 소스는 읽기만 했고 이 검토에서 RTL·계수·허용치를 수정하지 않았다. `AGENTS.md`, `CLAUDE.md`, `docs/RTL_CODING_RULES.md`, `docs/MFCC_SPEC.md`와 최종 IP04 계약을 적용했다.
+검토일: 2026-10-04 KST. 범위는 `hardware/fp32/rtl/`의 현재 사용자 작성 SystemVerilog 여섯 파일과 compact Mel 계수 export 변경이다. 소스는 읽기만 했고 이 검토에서 RTL·계수·허용치를 수정하지 않았다. `AGENTS.md`, `docs/RTL_CODING_RULES.md`, `docs/MFCC_SPEC.md`와 최종 IP04 계약을 적용했다.
 
 **판정:** 명시된 단일 clock·유한 PCM16·정상 ready/valid·EOF 계약에서 수정이 필요한 새 구조/핸드셰이크 결함은 발견하지 못했다. 이 결론은 정적 검토 범위의 판단이며 전체 MFCC 정확도나 모든 상태의 형식 검증 결과가 아니다. 실제 실행 결과는 제5절에 기록한 범위로 한정한다.
 

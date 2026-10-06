@@ -102,7 +102,7 @@ FP32의16RAMB18은8tile, fixed의9RAMB36+7RAMB18은12.5tile로 단위를 맞췄�
 
 ## 이번 감사 자료 위치
 
-새 감사 자료는 `C:/Users/rlagk/Documents/Codex/2026-10-03/new-chat/audits/three_sessions_20261004/`에 저장했다.
+새 감사 자료는 저장소 밖 로컬 감사 폴더의 `audits/three_sessions_20261004/`에 저장했다.
 
 - `full_contract_recheck.log`: 전체 v2 계약 재계산.
 - `cross_session_numeric_audit.json`: 개발 MFCC 오차와 v1/v2 입력 차이의 독립 계산.

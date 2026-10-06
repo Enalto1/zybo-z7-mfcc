@@ -1,7 +1,7 @@
 # 고정소수점 선행 실험 결과 (Q1)
 
-작성: 2026-10-04 Asia/Seoul. 작성자: Claude Code(고정소수점 수치 설계·RTL 검증 담당).
-정정: 2026-10-04, 사용자 지시에 따라 Codex가 수치 실험을 인계받아 집계와 해석을 교정했다.
+작성: 2026-10-04 Asia/Seoul. 작성 범위: 고정소수점 수치 설계·RTL 검증.
+정정: 2026-10-04, 사용자 지시에 따라 수치 실험을 인계하여 집계와 해석을 교정했다.
 수치 계약은 [FIXED_POINT_QUANTIZATION_PLAN.md](FIXED_POINT_QUANTIZATION_PLAN.md).
 후속 FFT 정밀도 비교와 현재 후보 제안은 [FIXED_POINT_PRECISION_REVIEW.md](FIXED_POINT_PRECISION_REVIEW.md).
 
